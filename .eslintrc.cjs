@@ -16,6 +16,7 @@ module.exports = {
     'react-refresh'
   ],
   rules: {
+    // COMMON
     'react-refresh/only-export-components': 'warn',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
@@ -39,6 +40,14 @@ module.exports = {
     'keyword-spacing': 1,
     'comma-dangle': 1,
     'comma-spacing': 1,
-    'arrow-spacing': 1
+    'arrow-spacing': 1,
+
+    // MUI
+    'no-restricted-imports': [
+      'error',
+      {
+        'patterns': ['@mui/*/*/*']
+      }
+    ]
   }
 }

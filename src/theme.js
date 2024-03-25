@@ -20,6 +20,10 @@ import { teal, deepOrange, cyan, orange } from '@mui/material/colors'
 //   }
 // })
 const theme = extendTheme({
+  custom: {
+    appBarHeight: '56px',
+    boardBarHeight: '58px'
+  },
   colorSchemes: {
     light: {
       palette: {

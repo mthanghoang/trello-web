@@ -1,5 +1,3 @@
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
 import { useColorScheme } from '@mui/material/styles'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
@@ -9,6 +7,8 @@ import Select from '@mui/material/Select'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
 import SettingsBrightness from '@mui/icons-material/SettingsBrightness'
+import Container from '@mui/material/Container'
+// import theme from './theme'
 
 function ModeSelect() {
   const { mode, setMode } = useColorScheme()
@@ -47,32 +47,35 @@ function ModeSelect() {
   )
 }
 
-function ModeToggle() {
-  const { mode, setMode } = useColorScheme()
-  return (
-    <Button
-      onClick={() => {
-        setMode(mode === 'light' ? 'dark' : 'light')
-      }}
-    >
-      {mode === 'light' ? 'Turn dark' : 'Turn light'}
-    </Button>
-  )
-}
-
 function App() {
   return (
-    <>
-      <ModeSelect />
-      <hr />
-      <ModeToggle />
-      <hr />
-      <div>ThangHoang</div>
-      <Typography variant='body2' color='text.secondary'>Test</Typography>
-      <Button variant='text'>Text</Button>
-      <Button variant='contained'>Contained</Button>
-      <Button variant='outlined'>Outlined</Button>
-    </>
+    <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
+      <Box sx={{
+        backgroundColor: 'primary.light',
+        width: '100%',
+        height: (theme) => theme.custom.appBarHeight,
+        display: 'flex',
+        alignItems: 'center'
+      }}>
+        <ModeSelect />
+      </Box>
+      <Box sx={{
+        backgroundColor: 'primary.dark',
+        width: '100%',
+        height: (theme) => theme.custom.boardBarHeight,
+        display: 'flex',
+        alignItems: 'center'
+      }}>
+        BOARD BAR
+      </Box>
+      <Box sx={{
+        backgroundColor: 'primary.main',
+        width: '100%',
+        height: (theme) => `calc(100vh - ${theme.custom.appBarHeight} - ${theme.custom.boardBarHeight})`
+      }}>
+        BOARD CONTENT
+      </Box>
+    </Container>
   )
 }
 

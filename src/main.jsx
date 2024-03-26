@@ -10,9 +10,8 @@ import theme from '~/theme.js'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <CssVarsProvider theme={theme}>
-      <CssBaseline>
-        <App />
-      </CssBaseline>
+      <CssBaseline />
+      <App />
     </CssVarsProvider>
   </React.StrictMode>
 )

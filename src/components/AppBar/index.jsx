@@ -9,6 +9,7 @@ import Recent from './Menus/Recent'
 import Starred from './Menus/Starred'
 import Templates from './Menus/Templates'
 import Profile from './Menus/Profile'
+import More from './Menus/More'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Badge from '@mui/material/Badge'
@@ -23,7 +24,9 @@ function AppBar() {
       height: (theme) => theme.custom.appBarHeight,
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      gap: 2,
+      overflowX: 'auto'
     }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <AppsIcon sx={{ color: 'primary.main' }} />
@@ -42,11 +45,16 @@ function AppBar() {
             }}>
             Trello</Typography>
         </Box>
-        <Workspaces />
-        <Recent />
-        <Starred />
-        <Templates />
-        <Button variant='outlined'>Create</Button>
+        <Box sx={{ display: { xs: 'none', s: 'none', md: 'none', lg: 'flex' }, gap: 1 }}>
+          <Workspaces />
+          <Recent />
+          <Starred />
+          <Templates />
+          <Button variant='outlined'>Create</Button>
+        </Box>
+        <Box sx={{ display: { md: 'block', lg: 'none' } }}>
+          <More />
+        </Box>
       </Box>
       <Box sx={{
         display: 'flex',
@@ -59,7 +67,8 @@ function AppBar() {
           label="Search"
           variant="outlined"
           size='small'
-          type='search' />
+          type='search'
+          sx={{ minWidth: 120 }} />
         <ModeSelect />
         <Tooltip title="Notifications">
           <Badge sx={{ cursor: 'pointer' }} color="secondary" variant="dot">

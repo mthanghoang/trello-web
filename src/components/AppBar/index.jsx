@@ -18,8 +18,13 @@ import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
+import InputAdornment from '@mui/material/InputAdornment'
+import SearchIcon from '@mui/icons-material/Search'
+import CloseIcon from '@mui/icons-material/Close'
+import { useState } from 'react'
 
 function AppBar() {
+  const [searchValue, setSearchValue] = useState('')
   return (
     <Box px={2} sx={{
       width: '100%',
@@ -28,22 +33,23 @@ function AppBar() {
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: 2,
-      overflowX: 'auto'
+      overflowX: 'auto',
+      backgroundColor: 'primary.dark'
     }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <AppsIcon sx={{ color: 'primary.main' }} />
+        <AppsIcon sx={{ color: 'white' }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <SvgIcon
             component={TrelloIcon}
             inheritViewBox
-            sx={{ color: 'primary.main' }}
+            sx={{ color: 'white' }}
             fontSize='small' />
           <Typography
             variant='span'
             sx={{
               fontSize: '1.2rem',
               fontWeight: '500',
-              color: 'primary.main'
+              color: 'white'
             }}>
             Trello</Typography>
         </Box>
@@ -57,9 +63,16 @@ function AppBar() {
         <Button
           startIcon={<LibraryAddIcon />}
           variant='outlined'
-          sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'flex' } }}>Create</Button>
+          sx={{
+            color: 'white',
+            border: 'none',
+            '&:hover': { border: 'none' },
+            display: { xs: 'none', sm: 'none', md: 'none', lg: 'flex' }
+          }}>
+            Create
+        </Button>
         <IconButton sx={{ display: { md: 'flex', lg: 'none' } }}>
-          <LibraryAddIcon sx={{ color: 'primary.main' }} />
+          <LibraryAddIcon sx={{ color: 'white' }} />
         </IconButton>
       </Box>
       <Box sx={{
@@ -73,16 +86,43 @@ function AppBar() {
           label="Search"
           variant="outlined"
           size='small'
-          type='search'
-          sx={{ minWidth: 120 }} />
+          type='text'
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position='start'>
+                <SearchIcon sx={{ color: 'white' }}/>
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <CloseIcon
+                fontSize='small'
+                sx={{ display: searchValue ? 'inline-block' : 'none', color: 'white', cursor: 'pointer' }}
+                onClick={() => setSearchValue('')}
+              />
+            )
+          }}
+          sx={{
+            minWidth: 120,
+            maxWidth: 200,
+            '& label': { color: 'white' },
+            '& input': { color: 'white' },
+            '& label.Mui-focused': { color: 'white' },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': { borderColor: 'white' },
+              '&:hover fieldset': { borderColor: 'white' },
+              '&.Mui-focused fieldset': { borderColor: 'white' }
+            }
+          }} />
         <ModeSelect />
         <Tooltip title="Notifications">
-          <Badge sx={{ cursor: 'pointer' }} color="secondary" variant="dot">
-            <NotificationsNoneIcon sx={{ color: 'primary.main' }}/>
+          <Badge sx={{ cursor: 'pointer' }} color="warning" variant="dot">
+            <NotificationsNoneIcon sx={{ color: 'white' }}/>
           </Badge>
         </Tooltip>
         <Tooltip title='Help'>
-          <HelpOutlineIcon sx={{ cursor: 'pointer', color: 'primary.main' }} />
+          <HelpOutlineIcon sx={{ cursor: 'pointer', color: 'white' }} />
         </Tooltip>
         <Profile />
       </Box>

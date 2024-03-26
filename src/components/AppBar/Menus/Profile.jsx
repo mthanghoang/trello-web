@@ -33,7 +33,10 @@ function Profile() {
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
         >
-          <Avatar sx={{ width: 30, height: 30, fontSize: 14 }}>M</Avatar>
+          <Avatar
+            sx={{ width: 30, height: 30 }}
+            src='https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671134.jpg?t=st=1711453764~exp=1711457364~hmac=6d8800f7bc0933d45e020be63388d3c51abf09f0854d3175dbbd4e3300ccebeb&w=826'
+          />
         </IconButton>
       </Tooltip>
       <Menu

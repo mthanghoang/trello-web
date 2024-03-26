@@ -6,6 +6,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 
 import React from 'react'
+import Typography from '@mui/material/Typography'
 
 function More() {
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -38,20 +39,46 @@ function More() {
           'aria-labelledby': 'basic-button-recent'
         }}
       >
-        <MenuItem onClick={handleClose}>
-          <Button
-            id="basic-button-recent"
-            aria-controls={open ? 'basic-menu-recent' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            onClick={handleClick}
-            endIcon={<ChevronRightIcon />}
-          >
-            Recent
-          </Button>
+        <MenuItem
+          sx={{
+            paddingX: 1,
+            display: { lg: 'flex', xl: 'none' },
+            justifyContent:'space-between'
+          }}
+          onClick={handleClose}>
+          <Typography textAlign='left'>Templates</Typography>
+          <ChevronRightIcon sx={{ ml: 1 }}/>
         </MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem
+          sx={{
+            paddingX: 1,
+            display: { md: 'flex', lg: 'none' },
+            justifyContent: 'space-between'
+          }}
+          onClick={handleClose}>
+          <Typography textAlign='left'>Starred</Typography>
+          <ChevronRightIcon sx={{ ml: 1 }} />
+        </MenuItem>
+        <MenuItem
+          sx={{
+            paddingX: 1,
+            display: { sm: 'flex', md: 'none' },
+            justifyContent: 'space-between'
+          }}
+          onClick={handleClose}>
+          <Typography textAlign='left'>Recent</Typography>
+          <ChevronRightIcon sx={{ ml: 1 }} />
+        </MenuItem>
+        <MenuItem
+          sx={{
+            paddingX: 1,
+            display: { xs: 'flex', sm: 'none' },
+            justifyContent: 'space-between'
+          }}
+          onClick={handleClose}>
+          <Typography textAlign='left'>Workspaces</Typography>
+          <ChevronRightIcon sx={{ ml: 1 }} />
+        </MenuItem>
       </Menu>
     </Box>
   )

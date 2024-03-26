@@ -11,6 +11,7 @@ import Templates from './Menus/Templates'
 import Profile from './Menus/Profile'
 import More from './Menus/More'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
 import Badge from '@mui/material/Badge'
 import Tooltip from '@mui/material/Tooltip'
@@ -29,7 +30,7 @@ function AppBar() {
       gap: 2,
       overflowX: 'auto'
     }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <AppsIcon sx={{ color: 'primary.main' }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <SvgIcon
@@ -46,16 +47,20 @@ function AppBar() {
             }}>
             Trello</Typography>
         </Box>
-        <Box sx={{ display: { xs: 'none', s: 'none', md: 'none', lg: 'flex' }, gap: 1 }}>
-          <Workspaces />
-          <Recent />
-          <Starred />
-          <Templates />
-          <Button startIcon={<LibraryAddIcon />} variant='outlined'>Create</Button>
-        </Box>
-        <Box sx={{ display: { md: 'block', lg: 'none' } }}>
+        <Box sx={{ display: { xs: 'none', sm: 'flex' } }}><Workspaces /></Box>
+        <Box sx={{ display: { xs: 'none', sm: 'none', md: 'flex' } }}><Recent /></Box>
+        <Box sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'flex' } }}><Starred /></Box>
+        <Box sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex' } }}><Templates /></Box>
+        <Box sx={{ display: { lg: 'flex', xl: 'none' } }}>
           <More />
         </Box>
+        <Button
+          startIcon={<LibraryAddIcon />}
+          variant='outlined'
+          sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'flex' } }}>Create</Button>
+        <IconButton sx={{ display: { md: 'flex', lg: 'none' } }}>
+          <LibraryAddIcon sx={{ color: 'primary.main' }} />
+        </IconButton>
       </Box>
       <Box sx={{
         display: 'flex',

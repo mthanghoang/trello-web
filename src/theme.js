@@ -18,10 +18,15 @@ import { experimental_extendTheme as extendTheme } from '@mui/material/styles'
 //     }
 //   }
 // })
+const APP_BAR_HEIGHT = '60px'
+const BOARD_BAR_HEIGHT = '58px'
+const BOARD_CONTENT_HEIGHT = `calc(100vh - ${APP_BAR_HEIGHT} - ${BOARD_BAR_HEIGHT})`
+
 const theme = extendTheme({
   custom: {
-    appBarHeight: '60px',
-    boardBarHeight: '58px'
+    appBarHeight: APP_BAR_HEIGHT,
+    boardBarHeight: BOARD_BAR_HEIGHT,
+    boardContentHeight: BOARD_CONTENT_HEIGHT
   },
   colorSchemes: {
     light: {
@@ -98,9 +103,16 @@ const theme = extendTheme({
           '&.Mui-focused fieldset': { borderWidth: '1px !important' }
         })
       }
-    }
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          // color: theme.palette.primary.main,
+          '&.MuiTypography-body1': { fontSize: '0.875rem' }
+        })
+      }
+    },
   }
   // ...other properties
 })
-console.log(theme)
 export default theme

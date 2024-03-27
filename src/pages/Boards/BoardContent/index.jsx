@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/system/Box'
 import Menu from '@mui/material/Menu'
@@ -33,17 +33,27 @@ function BoardContent() {
   const handleClose = () => setAnchorEl(null)
 
   // DRAG SCREEN TO SCROLL HORIZONTALLY
+  const myRef = useRef()
+  const ele = myRef.current
   const [isDown, setIsDown] = useState(false)
-  const handleMouseDown = () => {
+  const [startX, setStartX] = useState(null)
+  const [scrollLeft, setScrollLeft] = useState(0)
+  const handleMouseDown = (event) => {
     setIsDown(true)
-    console.log('mouse is pressed')
+    setStartX(event.pageX)
+    setScrollLeft(ele.scrollLeft)
+    // console.log(event)
+    // console.log('mouse is pressed')
   }
   const handleMouseUp = () => {
     setIsDown(false)
   }
-  const handleMouseMove = () => {
+  const handleMouseMove = (e) => {
     if (isDown) {
-      console.log('mouse is moved')
+      e.preventDefault()
+      const x = e.pageX
+      const dx = x - startX
+      ele.scrollLeft = scrollLeft - dx
     }
   }
 
@@ -63,6 +73,7 @@ function BoardContent() {
         // cursor: 'grab',
         '&::-webkit-scrollbar-track': { m: 2 }
       }}
+      ref={myRef}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
@@ -76,7 +87,9 @@ function BoardContent() {
           borderRadius: '6px',
           height: 'fit-content',
           maxHeight: (theme) => `calc(${theme.custom.boardContentHeight} - ${theme.spacing(5)})`
-        }}>
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+        >
           {/* HEADER */}
           <Box sx={{
             height: COLUMN_HEADER_HEIGHT,
@@ -352,7 +365,8 @@ function BoardContent() {
           borderRadius: '6px',
           height: 'fit-content',
           maxHeight: (theme) => `calc(${theme.custom.boardContentHeight} - ${theme.spacing(5)})`
-        }}>
+        }}
+        onMouseDown={(e) => e.stopPropagation()}>
           {/* HEADER */}
           <Box sx={{
             height: COLUMN_HEADER_HEIGHT,

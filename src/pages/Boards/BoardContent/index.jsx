@@ -26,16 +26,33 @@ function BoardContent() {
   const COLUMN_HEADER_HEIGHT = '50px'
   const COLUMN_FOOTER_HEIGHT = '56px'
 
+  // MENU DROPDOWN
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleClose = () => setAnchorEl(null)
+
+  // DRAG SCREEN TO SCROLL HORIZONTALLY
+  const [isDown, setIsDown] = useState(false)
+  const handleMouseDown = () => {
+    setIsDown(true)
+    console.log('mouse is pressed')
+  }
+  const handleMouseUp = () => {
+    setIsDown(false)
+  }
+  const handleMouseMove = () => {
+    if (isDown) {
+      console.log('mouse is moved')
+    }
+  }
+
   return (
     <Box sx={{
       backgroundColor: 'primary.main',
       width: '100%',
       height: (theme) => theme.custom.boardContentHeight,
-      padding: '0 0 10px 0'
+      padding: '10px 0 10px 0'
     }}>
       <Box sx={{
         width: '100%',
@@ -43,8 +60,13 @@ function BoardContent() {
         display: 'flex',
         overflowX: 'auto',
         overflowY: 'hidden',
+        // cursor: 'grab',
         '&::-webkit-scrollbar-track': { m: 2 }
-      }}>
+      }}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      >
         {/* Column 01*/}
         <Box sx={{
           minWidth: '300px',
@@ -437,7 +459,7 @@ function BoardContent() {
             }}>
               <CardMedia
                 sx={{ height: 140 }}
-                image="https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                image="https://images.unsplash.com/photo-1621111848501-8d3634f82336?q=80&w=1930&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 title="green iguana"
               />
               <CardContent sx={{

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/system/Box'
 import Menu from '@mui/material/Menu'
@@ -26,16 +26,43 @@ function BoardContent() {
   const COLUMN_HEADER_HEIGHT = '50px'
   const COLUMN_FOOTER_HEIGHT = '56px'
 
+  // MENU DROPDOWN
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleClose = () => setAnchorEl(null)
+
+  // DRAG SCREEN TO SCROLL HORIZONTALLY
+  const myRef = useRef()
+  const ele = myRef.current
+  const [isDown, setIsDown] = useState(false)
+  const [startX, setStartX] = useState(null)
+  const [scrollLeft, setScrollLeft] = useState(0)
+  const handleMouseDown = (event) => {
+    setIsDown(true)
+    setStartX(event.pageX)
+    setScrollLeft(ele.scrollLeft)
+    // console.log(event)
+    // console.log('mouse is pressed')
+  }
+  const handleMouseUp = () => {
+    setIsDown(false)
+  }
+  const handleMouseMove = (e) => {
+    if (isDown) {
+      e.preventDefault()
+      const x = e.pageX
+      const dx = x - startX
+      ele.scrollLeft = scrollLeft - dx
+    }
+  }
+
   return (
     <Box sx={{
       backgroundColor: 'primary.main',
       width: '100%',
       height: (theme) => theme.custom.boardContentHeight,
-      padding: '0 0 10px 0'
+      padding: '10px 0 10px 0'
     }}>
       <Box sx={{
         width: '100%',
@@ -43,8 +70,14 @@ function BoardContent() {
         display: 'flex',
         overflowX: 'auto',
         overflowY: 'hidden',
+        // cursor: 'grab',
         '&::-webkit-scrollbar-track': { m: 2 }
-      }}>
+      }}
+      ref={myRef}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      >
         {/* Column 01*/}
         <Box sx={{
           minWidth: '300px',
@@ -54,7 +87,9 @@ function BoardContent() {
           borderRadius: '6px',
           height: 'fit-content',
           maxHeight: (theme) => `calc(${theme.custom.boardContentHeight} - ${theme.spacing(5)})`
-        }}>
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+        >
           {/* HEADER */}
           <Box sx={{
             height: COLUMN_HEADER_HEIGHT,
@@ -330,7 +365,8 @@ function BoardContent() {
           borderRadius: '6px',
           height: 'fit-content',
           maxHeight: (theme) => `calc(${theme.custom.boardContentHeight} - ${theme.spacing(5)})`
-        }}>
+        }}
+        onMouseDown={(e) => e.stopPropagation()}>
           {/* HEADER */}
           <Box sx={{
             height: COLUMN_HEADER_HEIGHT,
@@ -437,7 +473,7 @@ function BoardContent() {
             }}>
               <CardMedia
                 sx={{ height: 140 }}
-                image="https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                image="https://images.unsplash.com/photo-1621111848501-8d3634f82336?q=80&w=1930&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 title="green iguana"
               />
               <CardContent sx={{

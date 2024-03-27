@@ -81,9 +81,11 @@ function AppBar() {
             }}>
             Create
           </Button>
-          <IconButton sx={{ display: { md: 'flex', lg: 'none' } }}>
-            <LibraryAddIcon sx={{ color: 'white' }} />
-          </IconButton>
+          <Tooltip title='Create new board'>
+            <IconButton sx={{ display: { md: 'flex', lg: 'none' } }}>
+              <LibraryAddIcon sx={{ color: 'white' }} />
+            </IconButton>
+          </Tooltip>
         </Box>
         <Box sx={{
           display: 'flex',

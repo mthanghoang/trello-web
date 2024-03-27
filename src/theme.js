@@ -56,11 +56,11 @@ const theme = extendTheme({
         body: {
           '*::-webkit-scrollbar': {
             width: '8px',
-            height: '8px'
+            height: '6px'
           },
           '*::-webkit-scrollbar-thumb': {
             backgroundColor: '#dcdde1',
-            borderRadius: '8px'
+            borderRadius: '4px'
           },
           '*::-webkit-scrollbar-thumb:hover': {
             backgroundColor: 'white'

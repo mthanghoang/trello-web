@@ -35,7 +35,7 @@ function BoardContent() {
       backgroundColor: 'primary.main',
       width: '100%',
       height: (theme) => theme.custom.boardContentHeight,
-      padding: '10px 0 10px 0'
+      padding: '0 0 10px 0'
     }}>
       <Box sx={{
         width: '100%',

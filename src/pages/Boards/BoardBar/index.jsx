@@ -74,7 +74,9 @@ function BoardBar() {
               width: 30,
               height: 30,
               fontSize: 14,
-              border: 'none'
+              border: 'none',
+              color: 'white',
+              cursor: 'pointer'
             }
           }}
         >

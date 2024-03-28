@@ -4,7 +4,7 @@ import Column from './Column/Column'
 import Button from '@mui/material/Button'
 import AddIcon from '@mui/icons-material/Add'
 
-function ListColumns() {
+function ListColumns({ columns }) {
   // DRAG SCREEN TO SCROLL HORIZONTALLY
   const myRef = useRef()
   const ele = myRef.current
@@ -43,12 +43,9 @@ function ListColumns() {
     onMouseLeave={handleMouseLeave}
     onMouseMove={handleMouseMove}
     >
-      {/* Column 01*/}
-      <Column />
-      {/* Column 2 */}
-      <Column />
-      <Column />
-      <Column />
+      {columns?.map(column =>
+        <Column key={column._id} column_data={column}/>
+      )}
 
       <Box sx={{
         bgcolor: '#ffffff1d',

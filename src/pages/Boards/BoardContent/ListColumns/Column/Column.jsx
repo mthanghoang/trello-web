@@ -15,11 +15,14 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import { Button, ListItemIcon, ListItemText, Tooltip } from '@mui/material'
 import ListCards from './ListCards/ListCards'
+import { mapOrder } from '~/utils/sorters'
 
 // const COLUMN_HEADER_HEIGHT = '50px'
 // const COLUMN_FOOTER_HEIGHT = '56px'
 
-function Column() {
+function Column({ column_data }) {
+  // CARDS ORDERING
+  const orderedCards = mapOrder(column_data?.cards, column_data?.cardOrderIds, '_id')
   // MENU DROPDOWN
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -51,7 +54,7 @@ function Column() {
           cursor: 'pointer',
           color: 'grey.700'
         }}>
-          List Title</Typography>
+          {column_data?.title}</Typography>
         <Tooltip title='More options'>
           <MoreHorizIcon
             fontSize='small'
@@ -117,7 +120,7 @@ function Column() {
       </Box>
 
       {/* LIST CARDs */}
-      <ListCards />
+      <ListCards cards={orderedCards}/>
 
       {/* FOOTER */}
       <Box sx={{

@@ -16,11 +16,27 @@ import DragHandleIcon from '@mui/icons-material/DragHandle'
 import { Button, ListItemIcon, ListItemText, Tooltip } from '@mui/material'
 import ListCards from './ListCards/ListCards'
 import { mapOrder } from '~/utils/sorters'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
-// const COLUMN_HEADER_HEIGHT = '50px'
-// const COLUMN_FOOTER_HEIGHT = '56px'
 
 function Column({ column_data }) {
+
+  // DRAG AND DROP
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: column_data._id,
+    data: { ...column_data } //bỏ dòng này đi vẫn chạy được
+  })
+
+  const dndKitColumnStyle = {
+    // transform: CSS.Transform.toString(transform),
+    //dùng transform hình dáng cột sẽ bị biến đổi
+    // https://github.com/clauderic/dnd-kit/issues/117
+    transform: CSS.Translate.toString(transform),
+    transition,
+    touchAction: 'none'
+  }
+
   // CARDS ORDERING
   const orderedCards = mapOrder(column_data?.cards, column_data?.cardOrderIds, '_id')
   // MENU DROPDOWN
@@ -39,6 +55,10 @@ function Column({ column_data }) {
       height: 'fit-content',
       maxHeight: (theme) => `calc(${theme.custom.boardContentHeight} - ${theme.spacing(5)})`
     }}
+    ref={setNodeRef}
+    style={dndKitColumnStyle}
+    {...attributes}
+    {...listeners}
     onMouseDown={(e) => e.stopPropagation()}
     >
       {/* HEADER */}

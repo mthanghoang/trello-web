@@ -8,22 +8,9 @@ import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 
-function Card({ noMedia }) {
-  if (noMedia) {
-    return (
-      <MuiCard sx={{
-        cursor: 'pointer',
-        boxShadow: '0 2px 2px rgba(0, 0, 0, 0.3)',
-        overflow: 'unset'
-      }}>
-        <CardContent sx={{
-          p: 1.5,
-          '&:last-child': { p: 1.5 }
-        }}>
-          <Typography>Card 01</Typography>
-        </CardContent>
-      </MuiCard>
-    )
+function Card({ card_data }) {
+  const renderCardActions = () => {
+    return !!card_data?.memberIds?.length || !!card_data?.comments?.length || !!card_data?.attachments?.length
   }
   return (
     <MuiCard sx={{
@@ -31,24 +18,33 @@ function Card({ noMedia }) {
       boxShadow: '0 2px 2px rgba(0, 0, 0, 0.3)',
       overflow: 'unset'
     }}>
-      <CardMedia
-        sx={{ height: 140 }}
-        image="https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        title="green iguana"
-      />
+      {card_data?.cover &&
+        <CardMedia
+          sx={{ height: 140 }}
+          image={card_data?.cover}
+        />
+      }
       <CardContent sx={{
         p: 1.5,
         '&:last-child': { p: 1.5 }
       }}>
-        <Typography>MERN Stack</Typography>
+        <Typography>{card_data?.title}</Typography>
       </CardContent>
-      <CardActions sx={{
-        p: '0 4px 8px 4px'
-      }}>
-        <Button sx={{ color: 'text.primary' }} size="small" startIcon={<GroupIcon />}>12</Button>
-        <Button sx={{ color: 'text.primary' }} size="small" startIcon={<ModeCommentIcon />}>15</Button>
-        <Button sx={{ color: 'text.primary' }} size="small" startIcon={<AttachmentIcon />}>10</Button>
-      </CardActions>
+
+      {renderCardActions() &&
+        <CardActions sx={{
+          p: '0 4px 8px 4px'
+        }}>
+          {!!card_data?.memberIds?.length &&
+          <Button sx={{ color: 'text.primary' }} size="small" startIcon={<GroupIcon />}>{card_data?.memberIds?.length}</Button>}
+
+          {!!card_data?.comments?.length &&
+          <Button sx={{ color: 'text.primary' }} size="small" startIcon={<ModeCommentIcon />}>{card_data?.comments?.length}</Button>}
+
+          {!!card_data?.attachments?.length &&
+          <Button sx={{ color: 'text.primary' }} size="small" startIcon={<AttachmentIcon />}>{card_data?.attachments?.length}</Button>}
+        </CardActions>
+      }
     </MuiCard>
   )
 }

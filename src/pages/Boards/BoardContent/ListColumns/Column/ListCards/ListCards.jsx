@@ -1,7 +1,7 @@
 import Box from '@mui/system/Box'
 import Card from './Card/Card'
 
-function ListCards() {
+function ListCards({ cards }) {
   return (
     <Box sx={{
       p: '0 5px',
@@ -23,8 +23,11 @@ function ListCards() {
         backgroundColor: '#bfc2cf'
       }
     }}>
-      <Card />
-      <Card noMedia />
+      {/* <Card />
+      <Card noMedia /> */}
+      {cards.map((card) => (
+        <Card key={card._id} card_data={card}/>
+      ))}
     </Box>
   )
 }

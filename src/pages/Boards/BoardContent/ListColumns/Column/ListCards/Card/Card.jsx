@@ -7,17 +7,42 @@ import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 function Card({ card_data }) {
   const renderCardActions = () => {
     return !!card_data?.memberIds?.length || !!card_data?.comments?.length || !!card_data?.attachments?.length
   }
+
+  // DRAG AND DROP
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: card_data._id,
+    data: { ...card_data } //bỏ dòng này đi vẫn chạy được
+  })
+  const dndKitCardStyle = {
+    // transform: CSS.Transform.toString(transform),
+    //dùng transform hình dáng draggable elements sẽ bị biến đổi
+    // https://github.com/clauderic/dnd-kit/issues/117
+    transform: CSS.Translate.toString(transform),
+    transition,
+    userSelect: 'none',
+    opacity: isDragging ? 0.5 : undefined
+  }
+
   return (
-    <MuiCard sx={{
-      cursor: 'pointer',
-      boxShadow: '0 2px 2px rgba(0, 0, 0, 0.3)',
-      overflow: 'unset'
-    }}>
+    // <div ref={setNodeRef}>
+    <MuiCard
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={dndKitCardStyle}
+      sx={{
+        cursor: 'pointer',
+        boxShadow: '0 2px 2px rgba(0, 0, 0, 0.3)',
+        overflow: 'unset'
+      }}
+    >
       {card_data?.cover &&
         <CardMedia
           sx={{ height: 140 }}
@@ -46,6 +71,7 @@ function Card({ card_data }) {
         </CardActions>
       }
     </MuiCard>
+    // </div>
   )
 }
 

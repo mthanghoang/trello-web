@@ -36,7 +36,7 @@ function Column({ column_data }) {
     transition,
     userSelect: 'none',
     height: '100%',
-    opacity: isDragging ? 0.5 : undefined
+    opacity: isDragging ? 0.2 : undefined
   }
 
   // CARDS ORDERING
@@ -50,7 +50,6 @@ function Column({ column_data }) {
   return (
     <div ref={setNodeRef} style={dndKitColumnStyle} {...attributes}>
       <Box
-        {...listeners}
         sx={{
           minWidth: '300px',
           maxWidth: '300px',
@@ -63,7 +62,7 @@ function Column({ column_data }) {
         onMouseDown={(e) => {e.stopPropagation()}}
       >
         {/* HEADER */}
-        <Box sx={{
+        <Box {...listeners} sx={{
           height: (theme) => theme.custom.columnHeaderHeight,
           p: 2,
           display: 'flex',
@@ -159,13 +158,11 @@ function Column({ column_data }) {
           startIcon={<AddCardIcon />}>
             Add a card
           </Button>
-          <Tooltip title='Drag to move'>
-            <DragHandleIcon sx={{
-              cursor: 'default',
-              color: 'grey.700',
-              borderRadius: '6px',
-              '&:hover': { bgcolor: 'grey.300' } }} />
-          </Tooltip>
+          <DragHandleIcon {...listeners} sx={{
+            cursor: 'grabbing',
+            color: 'grey.700',
+            borderRadius: '6px',
+            '&:hover': { bgcolor: 'grey.300' } }} />
         </Box>
       </Box>
     </div>

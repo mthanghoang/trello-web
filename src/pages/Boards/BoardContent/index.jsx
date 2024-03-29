@@ -9,11 +9,14 @@ import {
   useSensor,
   useSensors,
   DragOverlay,
-  defaultDropAnimationSideEffects } from '@dnd-kit/core'
+  defaultDropAnimationSideEffects,
+  closestCenter,
+  closestCorners } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useEffect, useState } from 'react'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
+import { cloneDeep } from 'lodash'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -60,24 +63,55 @@ function BoardContent({ board }) {
   }
 
   const handleDragEnd = (e) => {
-    console.log(e)
     const { active, over } = e
-    if (!over) return
+    if (!active || !over) return
 
-    // console.log('find over column id: ', findColumnByCardId(over.id)._id)
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
+      console.log('keo tha card')
+      const activeCard = activeDragItemData
+      const overCard = over.data.current
+      console.log('active card', activeCard)
+      console.log('over card', overCard)
+      //nếu kéo thả card trong cùng column
+      if (activeCard.columnId === overCard.columnId) {
+        // tìm column
+        const targetColumn = findColumnByCardId(activeCard._id)
+        // tìm index của 2 cards
+        const oldIndex = targetColumn?.cards?.findIndex(card => card._id === activeCard._id)
+        const newIndex = targetColumn?.cards?.findIndex(card => card._id === overCard._id)
+        //xếp lại thứ tự cards trong column
+        const dndOrderedCards = arrayMove(targetColumn?.cards, oldIndex, newIndex)
 
-    if (active.id !== over.id) {
-      // console.log('dragged and dropped')
-      const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
-      const newIndex = orderedColumns.findIndex(column => column._id === over.id)
-      // const newIndex = orderedColumns.findIndex(column => column._id === findColumnByCardId(over.id)._id)
-      const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
-      setOrderedColumns(dndOrderedColumns)
+        // update state cho orderedColumns
+        setOrderedColumns(prevColumns => {
+          const newColumns = cloneDeep(prevColumns)
+          // tìm column
+          const Column = newColumns.find(column => column._id === targetColumn._id)
 
-      // update the columnOrderIds to DB (used for future API calls)
-      board.columnOrderIds = dndOrderedColumns.map(column => column._id)
-      // console.log('Column order sau khi dnd: ', board.columnOrderIds)
+          Column.cards = dndOrderedCards
+          Column.cardOrderIds = dndOrderedCards.map(card => card._id)
+          return newColumns
+        })
+      }
+      return
     }
+
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+      if (active.id !== over.id) {
+        // console.log('dragged and dropped')
+        const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
+        const newIndex = orderedColumns.findIndex(column => column._id === over.id)
+        // const newIndex = orderedColumns.findIndex(column => column._id === findColumnByCardId(over.id)._id)
+        const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
+        setOrderedColumns(dndOrderedColumns)
+
+        // update the columnOrderIds to DB (used for future API calls)
+        board.columnOrderIds = dndOrderedColumns.map(column => column._id)
+        // console.log('Column order sau khi dnd: ', board.columnOrderIds)
+        return
+      }
+    }
+
     setActiveDragItemData(null)
     setActiveDragItemId(null)
     setActiveDragItemType(null)
@@ -96,6 +130,7 @@ function BoardContent({ board }) {
   return (
     <DndContext
       sensors={sensors}
+      collisionDetection={closestCorners}
       onDragEnd={handleDragEnd}
       onDragStart={handleDragStart} >
       <Box sx={{

@@ -6,7 +6,7 @@ export const mockData = {
   board: {
     _id: 'board-id-01',
     title: 'MERN Stack Board',
-    description: 'Pro MERN stack Course',
+    description: 'description',
     type: 'public', // 'private'
     ownerIds: [], // Những users là Admin của board
     memberIds: [], // Những users là member bình thường của board
@@ -16,14 +16,14 @@ export const mockData = {
         _id: 'column-id-01',
         boardId: 'board-id-01',
         title: 'To Do List 01',
-        cardOrderIds: ['card-id-07', 'card-id-02', 'card-id-03', 'card-id-04', 'card-id-05', 'card-id-06', 'card-id-01'],
+        cardOrderIds: ['card-id-01', 'card-id-02', 'card-id-03', 'card-id-04', 'card-id-05', 'card-id-06', 'card-id-07'],
         cards: [
           {
             _id: 'card-id-01',
             boardId: 'board-id-01',
             columnId: 'column-id-01',
             title: 'Title of card 01',
-            description: 'Markdown Syntax (sẽ ở khóa nâng cao nhé)',
+            description: 'description',
             cover: 'https://images.unsplash.com/photo-1619183744799-68f1fd8f1edb?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
             memberIds: ['test-user-id-01'],
             comments: ['test comment 01', 'test comment 02'],

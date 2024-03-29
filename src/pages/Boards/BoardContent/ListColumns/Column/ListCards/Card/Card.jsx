@@ -27,7 +27,7 @@ function Card({ card_data }) {
     transform: CSS.Translate.toString(transform),
     transition,
     userSelect: 'none',
-    opacity: isDragging ? 0.5 : undefined
+    opacity: isDragging ? 0.2 : undefined
   }
 
   return (

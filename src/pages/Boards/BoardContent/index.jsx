@@ -166,7 +166,7 @@ function BoardContent({ board }) {
       // }
       return
     }
-
+    
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
       if (active.id !== over.id) {
         // console.log('dragged and dropped')

@@ -9,11 +9,14 @@ import {
   useSensor,
   useSensors,
   DragOverlay,
-  defaultDropAnimationSideEffects } from '@dnd-kit/core'
+  defaultDropAnimationSideEffects,
+  closestCenter,
+  closestCorners } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useEffect, useState } from 'react'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
+import { cloneDeep } from 'lodash'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -59,25 +62,127 @@ function BoardContent({ board }) {
     setActiveDragItemData(e?.active?.data?.current)
   }
 
-  const handleDragEnd = (e) => {
-    console.log(e)
+  const handleDragOver = (e) => {
     const { active, over } = e
-    if (!over) return
 
-    // console.log('find over column id: ', findColumnByCardId(over.id)._id)
+    if (!active || !over) return
 
-    if (active.id !== over.id) {
-      // console.log('dragged and dropped')
-      const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
-      const newIndex = orderedColumns.findIndex(column => column._id === over.id)
-      // const newIndex = orderedColumns.findIndex(column => column._id === findColumnByCardId(over.id)._id)
-      const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
-      setOrderedColumns(dndOrderedColumns)
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
+      const activeCard = activeDragItemData
+      const overCard = over.data.current
 
-      // update the columnOrderIds to DB (used for future API calls)
-      board.columnOrderIds = dndOrderedColumns.map(column => column._id)
-      // console.log('Column order sau khi dnd: ', board.columnOrderIds)
+      // xử lý khi 2 cards khác column
+      if (activeCard.columnId !== overCard.columnId) {
+        // tìm column tương ứng của từng card
+        const activeColumn = findColumnByCardId(activeCard._id)
+        const overColumn = findColumnByCardId(overCard._id)
+        if (!overColumn) return
+        console.log('over column:', overColumn)
+        console.log('over card:', overCard)
+
+        setOrderedColumns(originColumns => {
+          // index của over card trong over column
+          const overColumnCardIndex = overColumn?.cards.findIndex(card => card._id === overCard._id)
+          console.log('overColumnCardIndex:', overColumnCardIndex)
+
+          // tính index của active card trong over column (cop từ thư viện dnd)
+          const isBelowOverItem = active.rect.current.translated &&
+                active.rect.current.translated.top > over.rect.top + over.rect.height
+          const modifier = isBelowOverItem ? 1 : 0
+          const newCardIndex = overColumnCardIndex >= 0
+            ? overColumnCardIndex + modifier
+            : overColumn?.cards?.length + 1
+          console.log('new index:', newCardIndex)
+
+          const clonedColumns = cloneDeep(originColumns)
+          const clonedActiveColumn = clonedColumns.find(column => column._id === activeColumn._id)
+          const clonedOverColumn = clonedColumns.find(column => column._id === overColumn._id)
+
+          if (clonedActiveColumn) {
+            clonedActiveColumn.cards = clonedActiveColumn.cards.filter(card => card._id !== activeCard._id)
+            clonedActiveColumn.cardOrderIds = clonedActiveColumn.cards.map(card => card._id)
+          }
+
+          if (clonedOverColumn) {
+            // kiểm tra xem card đang kéo có tồn tại ở over column chưa, nếu có thì phải xóa trước
+            clonedOverColumn.cards = clonedOverColumn.cards.filter(card => card._id !== activeCard._id)
+
+            // insert active card vao vi tri trong over column
+            clonedOverColumn.cards = clonedOverColumn.cards.toSpliced(newCardIndex, 0, activeCard)
+
+            clonedOverColumn.cardOrderIds = clonedOverColumn.cards.map(card => card._id)
+
+            // update column id cho card vừa được insert (ko co se di duoc ko ve duoc)
+            const clonedActiveCard = clonedOverColumn.cards.find(card => card._id === activeCard._id)
+            clonedActiveCard.columnId = clonedOverColumn._id
+          }
+
+          return clonedColumns
+        })
+      }
     }
+  }
+
+  const handleDragEnd = (e) => {
+    const { active, over } = e
+    if (!active || !over) return
+
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
+      // console.log('keo tha card')
+      const activeCard = activeDragItemData
+      const overCard = over.data.current
+
+      //nếu kéo thả card trong cùng column
+      if (activeCard.columnId === overCard.columnId) {
+        // tìm column
+        const targetColumn = findColumnByCardId(activeCard._id)
+        // tìm index của 2 cards
+        const oldIndex = targetColumn?.cards?.findIndex(card => card._id === activeCard._id)
+        const newIndex = targetColumn?.cards?.findIndex(card => card._id === overCard._id)
+        //xếp lại thứ tự cards trong column
+        const dndOrderedCards = arrayMove(targetColumn?.cards, oldIndex, newIndex)
+
+        // update state cho orderedColumns
+        setOrderedColumns(originColumns => {
+          const clonedColumns = cloneDeep(originColumns)
+          // tìm column
+          const clonedColumn = clonedColumns.find(column => column._id === targetColumn._id)
+
+          clonedColumn.cards = dndOrderedCards
+          clonedColumn.cardOrderIds = dndOrderedCards.map(card => card._id)
+          return clonedColumns
+        })
+      }
+      //nếu kéo thả card khác column
+      // if (activeCard.columnId !== overCard.columnId) {
+      //   // tìm over column
+      //   const overColumn = findColumnByCardId(overCard._id)
+
+      //   // update column id cho card mới được thêm vào over column
+      //   setOrderedColumns(originColumns => {
+      //     const clonedColumns = cloneDeep(originColumns)
+      //     const clonedOverColumn = clonedColumns.find(column => column._id =)
+      //   })
+      // }
+      return
+    }
+
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+      if (active.id !== over.id) {
+        // console.log('dragged and dropped')
+        const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
+        const newIndex = orderedColumns.findIndex(column => column._id === over.id)
+        // const newIndex = orderedColumns.findIndex(column => column._id === findColumnByCardId(over.id)._id)
+        const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
+        setOrderedColumns(dndOrderedColumns)
+
+        // update the columnOrderIds to DB (used for future API calls)
+        board.columnOrderIds = dndOrderedColumns.map(column => column._id)
+        // console.log('Column order sau khi dnd: ', board.columnOrderIds)
+        return
+      }
+    }
+
     setActiveDragItemData(null)
     setActiveDragItemId(null)
     setActiveDragItemType(null)
@@ -96,8 +201,11 @@ function BoardContent({ board }) {
   return (
     <DndContext
       sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
-      onDragStart={handleDragStart} >
+    >
       <Box sx={{
         backgroundColor: 'primary.main',
         width: '100%',

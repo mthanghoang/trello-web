@@ -13,7 +13,7 @@ import AddIcon from '@mui/icons-material/Add'
 import AddCardIcon from '@mui/icons-material/AddCard'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
-import { Button, ListItemIcon, ListItemText, Tooltip } from '@mui/material'
+import { Button, ListItemIcon, ListItemText } from '@mui/material'
 import ListCards from './ListCards/ListCards'
 import { mapOrder } from '~/utils/sorters'
 import { useSortable } from '@dnd-kit/sortable'
@@ -75,21 +75,19 @@ function Column({ column_data }) {
             color: 'grey.700'
           }}>
             {column_data?.title}</Typography>
-          <Tooltip title='More options'>
-            <MoreHorizIcon
-              fontSize='small'
-              sx={{
-                color: 'grey.700',
-                cursor: 'pointer',
-                borderRadius: '6px',
-                '&:hover': { bgcolor: 'grey.300' }
-              }}
-              id="basic-column-dropdown"
-              aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick} />
-          </Tooltip>
+          <MoreHorizIcon
+            fontSize='small'
+            sx={{
+              color: 'grey.700',
+              cursor: 'pointer',
+              borderRadius: '6px',
+              '&:hover': { bgcolor: 'grey.300' }
+            }}
+            id="basic-column-dropdown"
+            aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClick} />
           <Menu
             id="basic-menu-column-dropdown"
             anchorEl={anchorEl}

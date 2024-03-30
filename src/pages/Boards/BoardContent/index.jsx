@@ -11,13 +11,17 @@ import {
   DragOverlay,
   defaultDropAnimationSideEffects,
   closestCenter,
-  closestCorners } from '@dnd-kit/core'
+  closestCorners,
+  rectIntersection,
+  pointerWithin,
+  getFirstCollision } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
 import { cloneDeep, isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formatters'
+import { c } from 'vite/dist/node/types.d-aGj9QkWt'
 
 const ITEM_TYPE = {
   COLUMN: 'ITEM_TYPE_COLUMN',
@@ -45,6 +49,8 @@ function BoardContent({ board }) {
   const [activeDragItemType, setActiveDragItemType] = useState(null)
   const [activeDragItemData, setActiveDragItemData] = useState(null)
 
+  const lastOverId = useRef(null)
+
   useEffect(() => {
     // arrange the columns based on column order
     setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
@@ -71,8 +77,6 @@ function BoardContent({ board }) {
     if (activeDragItemType === ITEM_TYPE.CARD) {
       const activeCard = activeDragItemData
       const overCard = over.data.current
-      console.log('bd keo')
-      console.log('over item:', overCard)
 
       // if (!overItem.columnId) {
       //   console.log('collide voi column')
@@ -112,13 +116,10 @@ function BoardContent({ board }) {
         const activeColumn = findColumnByCardId(activeCard._id)
         const overColumn = findColumnByCardId(overCard._id)
         if (!overColumn) return
-        console.log('over column:', overColumn)
-        console.log('over card:', overCard)
 
         setOrderedColumns(originColumns => {
           // index của over card trong over column
           const overColumnCardIndex = overColumn?.cards.findIndex(card => card._id === overCard._id)
-          console.log('overColumnCardIndex:', overColumnCardIndex)
 
           // tính index của active card trong over column (cop từ thư viện dnd)
           const isBelowOverItem = active.rect.current.translated &&
@@ -127,7 +128,6 @@ function BoardContent({ board }) {
           const newCardIndex = overColumnCardIndex >= 0
             ? overColumnCardIndex + modifier
             : overColumn?.cards?.length + 1
-          console.log('new index:', newCardIndex)
 
           const clonedColumns = cloneDeep(originColumns)
           const clonedActiveColumn = clonedColumns.find(column => column._id === activeColumn._id)
@@ -159,8 +159,6 @@ function BoardContent({ board }) {
             const clonedActiveCard = clonedOverColumn.cards.find(card => card._id === activeCard._id)
             clonedActiveCard.columnId = clonedOverColumn._id
           }
-          console.log('ds card cua column cu:', clonedActiveColumn.cards)
-          console.log('ds card cua column moi:', clonedOverColumn.cards)
           return clonedColumns
         })
       }
@@ -242,10 +240,41 @@ function BoardContent({ board }) {
     })
   }
 
+  const customCollisionDetection = useCallback((args) => {
+    if (activeDragItemType === ITEM_TYPE.COLUMN) {
+      return rectIntersection({ ...args })
+    }
+    const pointerIntersections = pointerWithin(args)
+    const intersections = !!pointerIntersections?.length
+      ? pointerIntersections
+      : rectIntersection(args)
+
+    let overId = getFirstCollision(intersections, 'id')
+
+    console.log('overId:', overId)
+    if (overId) {
+      const intersectColumn = orderedColumns.find(column => column._id === overId)
+      if (intersectColumn) {
+        console.log('over id before')
+        // overId = closestCenter({
+        //   ...args,
+        //   droppableContainers: args.droppableContainers.filter(container => {
+        //     return (container.id !== overId) && (intersectColumn?.cardOrderIds?.includes(container.id))
+        //   })[0]?.id
+        // })
+        // console.log('over id after')
+      }
+
+      lastOverId.current = overId
+      return [{ id: overId }]
+    }
+    return lastOverId.current ? [{ id: lastOverId.current }] : []
+  }, [activeDragItemType, orderedColumns])
+
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCorners}
+      collisionDetection={customCollisionDetection}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}

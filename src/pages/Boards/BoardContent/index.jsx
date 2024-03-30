@@ -21,7 +21,6 @@ import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
 import { cloneDeep, isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formatters'
-import { c } from 'vite/dist/node/types.d-aGj9QkWt'
 
 const ITEM_TYPE = {
   COLUMN: 'ITEM_TYPE_COLUMN',
@@ -140,6 +139,7 @@ function BoardContent({ board }) {
             // khi đã kéo card cuối ra khỏi column cần them dummy card vào
             if (isEmpty(clonedActiveColumn.cards)) {
               clonedActiveColumn.cards = [generatePlaceholderCard(clonedActiveColumn)]
+              clonedActiveColumn.cardOrderIds = clonedActiveColumn.cards.map(card => card._id)
             }
           }
 
@@ -245,24 +245,26 @@ function BoardContent({ board }) {
       return rectIntersection({ ...args })
     }
     const pointerIntersections = pointerWithin(args)
-    const intersections = !!pointerIntersections?.length
-      ? pointerIntersections
-      : rectIntersection(args)
+    console.log('pointerIntersections:', pointerIntersections)
+    if (!pointerIntersections.length) return
+    // const intersections = !!pointerIntersections?.length
+    //   ? pointerIntersections
+    //   : closestCorners(args)
 
-    let overId = getFirstCollision(intersections, 'id')
+    let overId = getFirstCollision(pointerIntersections, 'id')
 
-    console.log('overId:', overId)
     if (overId) {
       const intersectColumn = orderedColumns.find(column => column._id === overId)
       if (intersectColumn) {
-        console.log('over id before')
-        // overId = closestCenter({
-        //   ...args,
-        //   droppableContainers: args.droppableContainers.filter(container => {
-        //     return (container.id !== overId) && (intersectColumn?.cardOrderIds?.includes(container.id))
-        //   })[0]?.id
-        // })
-        // console.log('over id after')
+        // console.log('over id before:', overId)
+        console.log('list cards:', intersectColumn.cardOrderIds)
+        overId = closestCorners({
+          ...args,
+          droppableContainers: args.droppableContainers.filter(container => {
+            return (container.id !== overId) && (intersectColumn?.cardOrderIds?.includes(container.id))
+          })
+        })[0]?.id
+        // console.log('over id after:', overId)
       }
 
       lastOverId.current = overId
@@ -275,6 +277,9 @@ function BoardContent({ board }) {
     <DndContext
       sensors={sensors}
       collisionDetection={customCollisionDetection}
+      // collisionDetection={activeDragItemType === ITEM_TYPE.COLUMN
+      //   ? rectIntersection
+      //   : closestCorners}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}

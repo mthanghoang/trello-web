@@ -10,7 +10,6 @@ import {
   useSensors,
   DragOverlay,
   defaultDropAnimationSideEffects,
-  closestCenter,
   closestCorners,
   rectIntersection,
   pointerWithin,
@@ -44,7 +43,6 @@ function BoardContent({ board }) {
 
   const [orderedColumns, setOrderedColumns] = useState([])
 
-  const [activeDragItemId, setActiveDragItemId] = useState(null)
   const [activeDragItemType, setActiveDragItemType] = useState(null)
   const [activeDragItemData, setActiveDragItemData] = useState(null)
 
@@ -61,7 +59,6 @@ function BoardContent({ board }) {
 
   const handleDragStart = (e) => {
     // console.log(e)
-    setActiveDragItemId(e?.active?.id)
     setActiveDragItemType(e?.active?.data?.current?.columnId
       ? ITEM_TYPE.CARD
       : ITEM_TYPE.COLUMN)
@@ -226,7 +223,6 @@ function BoardContent({ board }) {
     }
 
     setActiveDragItemData(null)
-    setActiveDragItemId(null)
     setActiveDragItemType(null)
   }
 
@@ -245,7 +241,7 @@ function BoardContent({ board }) {
       return rectIntersection({ ...args })
     }
     const pointerIntersections = pointerWithin(args)
-    console.log('pointerIntersections:', pointerIntersections)
+    // console.log('pointerIntersections:', pointerIntersections)
     if (!pointerIntersections.length) return
     // const intersections = !!pointerIntersections?.length
     //   ? pointerIntersections
@@ -257,7 +253,7 @@ function BoardContent({ board }) {
       const intersectColumn = orderedColumns.find(column => column._id === overId)
       if (intersectColumn) {
         // console.log('over id before:', overId)
-        console.log('list cards:', intersectColumn.cardOrderIds)
+        // console.log('list cards:', intersectColumn.cardOrderIds)
         overId = closestCorners({
           ...args,
           droppableContainers: args.droppableContainers.filter(container => {

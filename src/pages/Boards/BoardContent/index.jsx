@@ -16,11 +16,12 @@ import { arrayMove } from '@dnd-kit/sortable'
 import { useEffect, useState } from 'react'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
+import { generatePlaceholderCard } from '~/utils/formatters'
 
-const ACTIVE_DRAG_ITEM_TYPE = {
-  COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
-  CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
+const ITEM_TYPE = {
+  COLUMN: 'ITEM_TYPE_COLUMN',
+  CARD: 'ITEM_TYPE_CARD'
 }
 
 function BoardContent({ board }) {
@@ -57,8 +58,8 @@ function BoardContent({ board }) {
     // console.log(e)
     setActiveDragItemId(e?.active?.id)
     setActiveDragItemType(e?.active?.data?.current?.columnId
-      ? ACTIVE_DRAG_ITEM_TYPE.CARD
-      : ACTIVE_DRAG_ITEM_TYPE.COLUMN)
+      ? ITEM_TYPE.CARD
+      : ITEM_TYPE.COLUMN)
     setActiveDragItemData(e?.active?.data?.current)
   }
 
@@ -67,9 +68,43 @@ function BoardContent({ board }) {
 
     if (!active || !over) return
 
-    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
+    if (activeDragItemType === ITEM_TYPE.CARD) {
       const activeCard = activeDragItemData
       const overCard = over.data.current
+      console.log('bd keo')
+      console.log('over item:', overCard)
+
+      // if (!overItem.columnId) {
+      //   console.log('collide voi column')
+      //   const activeColumn = findColumnByCardId(activeCard._id)
+      //   setOrderedColumns(originColumns => {
+      //     const clonedColumns = cloneDeep(originColumns)
+      //     const clonedActiveColumn = clonedColumns.find(column => column._id === activeColumn._id)
+      //     const clonedOverColumn = clonedColumns.find(column => column._id === overItem._id)
+
+      //     if (clonedActiveColumn) {
+      //       clonedActiveColumn.cards = clonedActiveColumn.cards.filter(card => card._id !== activeCard._id)
+      //       clonedActiveColumn.cardOrderIds = clonedActiveColumn.cards.map(card => card._id)
+      //     }
+      //     if (clonedOverColumn) {
+      //       // kiểm tra xem card đang kéo có tồn tại ở over column chưa, nếu có thì phải xóa trước
+      //       clonedOverColumn.cards = clonedOverColumn.cards.filter(card => card._id !== activeCard._id)
+
+      //       // insert active card vao vi tri trong over column
+      //       clonedOverColumn.cards = clonedOverColumn.cards.toSpliced(0, 0, activeCard)
+
+      //       clonedOverColumn.cardOrderIds = clonedOverColumn.cards.map(card => card._id)
+
+      //       // update column id cho card vừa được insert (ko co se di duoc ko ve duoc)
+      //       const clonedActiveCard = clonedOverColumn.cards.find(card => card._id === activeCard._id)
+      //       clonedActiveCard.columnId = clonedOverColumn._id
+      //     }
+      //     console.log('ds card cua column cu:', clonedActiveColumn.cards)
+      //     console.log('ds card cua column moi:', clonedOverColumn.cards)
+      //     return clonedColumns
+      //   })
+      //   return
+      // }
 
       // xử lý khi 2 cards khác column
       if (activeCard.columnId !== overCard.columnId) {
@@ -101,11 +136,19 @@ function BoardContent({ board }) {
           if (clonedActiveColumn) {
             clonedActiveColumn.cards = clonedActiveColumn.cards.filter(card => card._id !== activeCard._id)
             clonedActiveColumn.cardOrderIds = clonedActiveColumn.cards.map(card => card._id)
+
+            // khi đã kéo card cuối ra khỏi column cần them dummy card vào
+            if (isEmpty(clonedActiveColumn.cards)) {
+              clonedActiveColumn.cards = [generatePlaceholderCard(clonedActiveColumn)]
+            }
           }
 
           if (clonedOverColumn) {
             // kiểm tra xem card đang kéo có tồn tại ở over column chưa, nếu có thì phải xóa trước
             clonedOverColumn.cards = clonedOverColumn.cards.filter(card => card._id !== activeCard._id)
+
+            // xóa dummy card ra khỏi over column
+            clonedOverColumn.cards = clonedOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
 
             // insert active card vao vi tri trong over column
             clonedOverColumn.cards = clonedOverColumn.cards.toSpliced(newCardIndex, 0, activeCard)
@@ -116,7 +159,8 @@ function BoardContent({ board }) {
             const clonedActiveCard = clonedOverColumn.cards.find(card => card._id === activeCard._id)
             clonedActiveCard.columnId = clonedOverColumn._id
           }
-
+          console.log('ds card cua column cu:', clonedActiveColumn.cards)
+          console.log('ds card cua column moi:', clonedOverColumn.cards)
           return clonedColumns
         })
       }
@@ -127,7 +171,7 @@ function BoardContent({ board }) {
     const { active, over } = e
     if (!active || !over) return
 
-    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
+    if (activeDragItemType === ITEM_TYPE.CARD) {
       // console.log('keo tha card')
       const activeCard = activeDragItemData
       const overCard = over.data.current
@@ -166,8 +210,8 @@ function BoardContent({ board }) {
       // }
       return
     }
-    
-    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+
+    if (activeDragItemType === ITEM_TYPE.COLUMN) {
       if (active.id !== over.id) {
         // console.log('dragged and dropped')
         const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
@@ -215,9 +259,9 @@ function BoardContent({ board }) {
         <ListColumns columns={orderedColumns}/>
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
-          {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN &&
+          {activeDragItemType === ITEM_TYPE.COLUMN &&
             <Column column_data={activeDragItemData}/>}
-          {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD &&
+          {activeDragItemType === ITEM_TYPE.CARD &&
             <Card card_data={activeDragItemData}/>}
         </DragOverlay>
       </Box>

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { toast } from 'react-toastify'
 import Box from '@mui/system/Box'
 import Column from './Column/Column'
 import Button from '@mui/material/Button'
@@ -38,7 +39,10 @@ function ListColumns({ columns }) {
 
   // về sau nhiều form có thể dùng react-hook-form
   const addNewList = () => {
-    if (!newListTitle) return
+    if (!newListTitle) {
+      toast.error('Please enter list title')
+      return
+    }
     // Gọi API dưới đây
     // ....
     console.log(newListTitle)

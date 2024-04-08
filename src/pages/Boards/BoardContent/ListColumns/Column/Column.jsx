@@ -20,6 +20,7 @@ import ListCards from './ListCards/ListCards'
 import { mapOrder } from '~/utils/sorters'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { toast } from 'react-toastify'
 import theme from '~/theme'
 
 
@@ -56,7 +57,9 @@ function Column({ column_data }) {
   const toggleNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
   const [newCardTitle, setNewCardTitle] = useState('')
   const addNewCard = () => {
-    if (!newCardTitle) return
+    if (!newCardTitle) {
+      toast.error('Please enter card title')
+    }
     // Gọi API dưới đây
     // ....
     console.log(newCardTitle)

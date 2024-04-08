@@ -42,12 +42,14 @@ function BoardBar({ board }) {
         overflowX: 'auto'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Chip
-            sx={CHIP_STYLES}
-            icon={<DashboardIcon />}
-            label={board?.title}
-            clickable
-          />
+          <Tooltip title={board?.description}>
+            <Chip
+              sx={CHIP_STYLES}
+              icon={<DashboardIcon />}
+              label={board?.title}
+              clickable
+            />
+          </Tooltip>
           <Chip
             sx={CHIP_STYLES}
             icon={board?.type === 'public' ? <PublicIcon /> : <VpnLockIcon />}

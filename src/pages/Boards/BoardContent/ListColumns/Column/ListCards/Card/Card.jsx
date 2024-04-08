@@ -40,10 +40,10 @@ function Card({ card_data }) {
       sx={{
         cursor: 'pointer',
         boxShadow: '0 2px 2px rgba(0, 0, 0, 0.3)',
-        // overflow: 'unset',
-        // display: card_data?.FE_PlaceholderCard ? 'none' : 'block'
-        overflow: card_data?.FE_PlaceholderCard ? 'hidden' : 'unset',
-        height: card_data?.FE_PlaceholderCard ? '0px' : 'unset'
+        overflow: 'unset',
+        display: card_data?.FE_PlaceholderCard ? 'none' : 'block'
+        // overflow: card_data?.FE_PlaceholderCard ? 'hidden' : 'unset',
+        // height: card_data?.FE_PlaceholderCard ? '0px' : 'unset',
       }}
     >
       {card_data?.cover &&

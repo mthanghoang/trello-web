@@ -3,6 +3,8 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/system/Box'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+import CloseIcon from '@mui/icons-material/Close'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import ContentCut from '@mui/icons-material/ContentCut'
 import ContentCopy from '@mui/icons-material/ContentCopy'
@@ -18,6 +20,7 @@ import ListCards from './ListCards/ListCards'
 import { mapOrder } from '~/utils/sorters'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import theme from '~/theme'
 
 
 function Column({ column_data }) {
@@ -41,12 +44,26 @@ function Column({ column_data }) {
 
   // CARDS ORDERING
   const orderedCards = mapOrder(column_data?.cards, column_data?.cardOrderIds, '_id')
+
   // MENU DROPDOWN
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleClose = () => setAnchorEl(null)
 
+  // Add new card
+  const [openNewCardForm, setOpenNewCardForm] = useState(false)
+  const toggleNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
+  const [newCardTitle, setNewCardTitle] = useState('')
+  const addNewCard = () => {
+    if (!newCardTitle) return
+    // Gọi API dưới đây
+    // ....
+    console.log(newCardTitle)
+    // clear input and close toggle
+    setNewCardTitle('')
+    toggleNewCardForm()
+  }
   return (
     <div ref={setNodeRef} style={dndKitColumnStyle} {...attributes}>
       <Box
@@ -138,29 +155,114 @@ function Column({ column_data }) {
         </Box>
 
         {/* LIST CARDs */}
-        <ListCards cards={orderedCards}/>
+        <ListCards cards={orderedCards} openNewCardForm/>
 
         {/* FOOTER */}
         <Box sx={{
           height: (theme) => theme.custom.columnFooterHeight,
-          py: 2,
-          px: '6px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
+          // display: 'flex',
+          // alignItems: 'center',
+          // py: 2,
+          px: '6px'
         }}>
-          <Button sx={{
-            flexGrow: 1,
-            justifyContent: 'flex-start'
-          }}
-          startIcon={<AddCardIcon />}>
-            Add a card
-          </Button>
-          <DragHandleIcon {...listeners} sx={{
-            cursor: 'grabbing',
-            color: 'grey.700',
-            borderRadius: '6px',
-            '&:hover': { bgcolor: 'grey.300' } }} />
+          {!openNewCardForm
+            ?
+            <Box sx={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <Button sx={{
+                flexGrow: 1,
+                justifyContent: 'flex-start'
+              }}
+              startIcon={<AddCardIcon />}
+              onClick={toggleNewCardForm}>
+                Add a card
+              </Button>
+              <DragHandleIcon {...listeners} sx={{
+                cursor: 'grabbing',
+                color: 'grey.700',
+                borderRadius: '6px',
+                '&:hover': { bgcolor: 'grey.300' } }} />
+            </Box>
+            :
+            <Box sx={{
+              // maxWidth: '250px',
+              // minWidth: '250px',
+              width: '100%',
+              py: 1,
+              // borderRadius: '8px',
+              height: 'fit-content',
+              bgcolor: '#ffffff1d',
+              display: 'flex',
+              justifyContent: 'space-between',
+              // flexDirection: 'column',
+              gap: 1
+            }} onMouseDown={(e) => e.stopPropagation()}>
+              <TextField
+                id="outlined-search"
+                label="Enter card title..."
+                variant="outlined"
+                size='small'
+                type='text'
+                autoFocus
+                // multiline
+                value={newCardTitle}
+                onChange={(e) => setNewCardTitle(e.target.value)}
+                sx={{
+                  width: '100%',
+                  '& label': { color: 'grey.500' },
+                  '& label.Mui-focused': { color: 'grey.500' },
+                  '& input': { color: theme => theme.palette.mode === 'light' ? 'text.primary' : 'primary.main'},
+                  // '& textarea': { color: 'white' },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: 'grey.500' },
+                    '&:hover fieldset': { borderColor: 'grey.500' },
+                    '&.Mui-focused fieldset': { borderColor: 'grey.500' }
+                  }
+                }} />
+              {/* Dưới này là box chứa nút Add và nút X */}
+              <Box sx={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                gap: '4px'
+              }}>
+                <Button
+                  sx={{
+                    height: '32px',
+                    color: 'white',
+                    backgroundColor: 'primary.main',
+                    '&:hover': {
+                      backgroundColor: 'primary.dark'
+                    }
+                  }}
+                  variant='outlined'
+                  onClick={addNewCard}>Add card
+                </Button>
+                <CloseIcon
+                  // fontSize='medium'
+                  sx={{
+                    boxSizing: 'content-box',
+                    color: 'grey.600',
+                    cursor: 'pointer',
+                    borderRadius: '4px',
+                    padding: '4px',
+                    '&:hover': {
+                      bgcolor: 'grey.400'
+                    } }}
+                  onClick={() => {
+                    toggleNewCardForm(),
+                    setNewCardTitle('')
+                  }}
+                />
+              </Box>
+            </Box>
+          }
         </Box>
       </Box>
     </div>

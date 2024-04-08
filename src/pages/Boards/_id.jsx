@@ -9,21 +9,21 @@ import { fetchBoardDetailsAPI } from '~/apis'
 
 function Board() {
   const [board, setBoard] = useState(null)
-  useEffect(() => {
-    // Tạm thời fix cứng boardId, về sau dùng react-router-dom sau
-    const boardId = '66138370b71c43201bb27685'
-    //Call API
-    fetchBoardDetailsAPI(boardId).then(board => {
-      setBoard(board)
-    })
-  }, [])
+  // useEffect(() => {
+  //   // Tạm thời fix cứng boardId, về sau dùng react-router-dom sau
+  //   const boardId = '66138370b71c43201bb27685'
+  //   //Call API
+  //   fetchBoardDetailsAPI(boardId).then(board => {
+  //     setBoard(board)
+  //   })
+  // }, [])
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
-      <BoardBar board={board}/>
-      <BoardContent board={board}/>
-      {/* <BoardBar board={mockData?.board}/>
-      <BoardContent board={mockData?.board}/> */}
+      {/* <BoardBar board={board}/>
+      <BoardContent board={board}/> */}
+      <BoardBar board={mockData?.board}/>
+      <BoardContent board={mockData?.board}/>
     </Container>
   )
 }

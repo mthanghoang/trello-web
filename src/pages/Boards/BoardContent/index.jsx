@@ -26,7 +26,7 @@ const ITEM_TYPE = {
   CARD: 'ITEM_TYPE_CARD'
 }
 
-function BoardContent({ board }) {
+function BoardContent({ board, createNewColumn, createNewCard }) {
   // Sensors
   //yêu cầu chuột di chuyển 3px để kích hoạt dnd, fix lỗi click bị gọi event
   const mouseSensor = useSensor(MouseSensor, {
@@ -286,7 +286,10 @@ function BoardContent({ board }) {
         height: (theme) => theme.custom.boardContentHeight,
         padding: '10px 0 10px 0'
       }}>
-        <ListColumns columns={orderedColumns}/>
+        <ListColumns
+          columns={orderedColumns}
+          createNewColumn={createNewColumn}
+          createNewCard={createNewCard}/>
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ITEM_TYPE.COLUMN &&

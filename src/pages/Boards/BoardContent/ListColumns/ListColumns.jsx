@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 
-function ListColumns({ columns }) {
+function ListColumns({ columns, createNewColumn, createNewCard }) {
   // DRAG SCREEN TO SCROLL HORIZONTALLY
   const myRef = useRef()
   const ele = myRef.current
@@ -35,20 +35,28 @@ function ListColumns({ columns }) {
   // Add new list (column)
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
-  const [newListTitle, setNewListTitle] = useState('')
+  const [newColumnTitle, setNewColumnTitle] = useState('')
 
   // về sau nhiều form có thể dùng react-hook-form
-  const addNewList = () => {
-    if (!newListTitle) {
+  const addNewColumn = async () => {
+    if (!newColumnTitle) {
       toast.error('Please enter list title')
       return
     }
-    // Gọi API dưới đây
-    // ....
-    console.log(newListTitle)
+
+    // Gọi API create new column
+    const newColumnData = {
+      title: newColumnTitle
+    }
+    /**
+     * gọi lên props function createNewColumn nằm ở component cha cao nhất (boards/_id.jsx)
+     * về sau có thể đưa dữ liệu Board ra ngoài Redux Global Store
+     * và có thể gọi luôn API ở đây thay vì gọi ngược nhiều cấp lên component cao nhất
+     */
+    await createNewColumn(newColumnData)
     // clear input and close toggle
-    setNewListTitle('')
     toggleNewColumnForm()
+    setNewColumnTitle('')
   }
   return (
     /**
@@ -75,7 +83,7 @@ function ListColumns({ columns }) {
       >
         {/* Columns are displayed here */}
         {columns?.map(column =>
-          <Column key={column._id} column_data={column}/>
+          <Column key={column._id} column_data={column} createNewCard={createNewCard}/>
         )}
 
         {/* Add new list button here */}
@@ -121,8 +129,8 @@ function ListColumns({ columns }) {
                 type='text'
                 autoFocus
                 multiline
-                value={newListTitle}
-                onChange={(e) => setNewListTitle(e.target.value)}
+                value={newColumnTitle}
+                onChange={(e) => setNewColumnTitle(e.target.value)}
                 sx={{
                   '& label': { color: 'white' },
                   '& input': { color: 'white' },
@@ -152,7 +160,7 @@ function ListColumns({ columns }) {
                     }
                   }}
                   variant='outlined'
-                  onClick={addNewList}>Add list
+                  onClick={addNewColumn}>Add list
                 </Button>
                 <CloseIcon
                   // fontSize='medium'
@@ -167,7 +175,7 @@ function ListColumns({ columns }) {
                     } }}
                   onClick={() => {
                     toggleNewColumnForm(),
-                    setNewListTitle('')
+                    setNewColumnTitle('')
                   }}
                 />
               </Box>

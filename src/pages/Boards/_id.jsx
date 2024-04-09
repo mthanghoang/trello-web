@@ -5,15 +5,15 @@ import BoardBar from './BoardBar'
 import BoardContent from './BoardContent'
 import { mockData } from '~/apis/mock_data'
 import { useEffect, useState } from 'react'
-import { fetchBoardDetailsAPI, createNewColumnAPI, createNewCardAPI } from '~/apis'
+import { fetchBoardDetailsAPI, createNewColumnAPI, createNewCardAPI, updateBoardDetailsAPI } from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
 
 function Board() {
   const [board, setBoard] = useState(null)
+  // Tạm thời fix cứng boardId, về sau dùng react-router-dom sau
+  const boardId = '66138370b71c43201bb27685'
   useEffect(() => {
-    // Tạm thời fix cứng boardId, về sau dùng react-router-dom sau
-    const boardId = '66138370b71c43201bb27685'
     //Call API
     fetchBoardDetailsAPI(boardId).then(board => {
       //Khi render lần đầu Column nào rỗng thì thêm dummy card cho nó để kéo thả
@@ -52,8 +52,6 @@ function Board() {
       boardId: board._id
     })
 
-    console.log('createdCard: ', createdCard)
-
     // Cập nhật state board
     const updatedBoard = { ...board }
     const columnToUpdate = updatedBoard.columns.find(column => column._id === createdCard.columnId)
@@ -63,6 +61,22 @@ function Board() {
     }
     setBoard(updatedBoard)
   }
+
+  // API for updating column order after drag and drop columns
+  const moveColumns = async (dndOrderedColumns) => {
+    const dndOrderedColumnIds = dndOrderedColumns.map(column => column._id)
+
+    // Cập nhật state board
+    const updatedBoard = { ...board }
+    updatedBoard.columns = dndOrderedColumns
+    updatedBoard.columnOrderIds = dndOrderedColumnIds
+    setBoard(updatedBoard)
+
+    // Gọi API update board
+    await updateBoardDetailsAPI(updatedBoard._id, {
+      columnOrderIds: updatedBoard.columnOrderIds
+    })
+  }
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
@@ -70,7 +84,8 @@ function Board() {
       <BoardContent
         board={board}
         createNewColumn={createNewColumn}
-        createNewCard={createNewCard}/>
+        createNewCard={createNewCard}
+        moveColumns={moveColumns}/>
       {/* <BoardBar board={mockData?.board}/>
       <BoardContent board={mockData?.board}/> */}
     </Container>

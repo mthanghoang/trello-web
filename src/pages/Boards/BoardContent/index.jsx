@@ -26,7 +26,7 @@ const ITEM_TYPE = {
   CARD: 'ITEM_TYPE_CARD'
 }
 
-function BoardContent({ board, createNewColumn, createNewCard }) {
+function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
   // Sensors
   //yêu cầu chuột di chuyển 3px để kích hoạt dnd, fix lỗi click bị gọi event
   const mouseSensor = useSensor(MouseSensor, {
@@ -208,15 +208,16 @@ function BoardContent({ board, createNewColumn, createNewCard }) {
 
     if (activeDragItemType === ITEM_TYPE.COLUMN) {
       if (active.id !== over.id) {
-        // console.log('dragged and dropped')
         const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
         const newIndex = orderedColumns.findIndex(column => column._id === over.id)
-        // const newIndex = orderedColumns.findIndex(column => column._id === findColumnByCardId(over.id)._id)
         const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
+        // update the columnOrderIds to DB (used for future API calls)
+        // ko dùng await ở đây vì vẫn muốn setOrderedColumns execute ngay để hiển thị ngay order mới
+        // trước khi DB kịp cập nhật order mới
+        moveColumns(dndOrderedColumns)
+
         setOrderedColumns(dndOrderedColumns)
 
-        // update the columnOrderIds to DB (used for future API calls)
-        board.columnOrderIds = dndOrderedColumns.map(column => column._id)
         // console.log('Column order sau khi dnd: ', board.columnOrderIds)
         return
       }

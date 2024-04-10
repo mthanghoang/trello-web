@@ -3,11 +3,21 @@ import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar'
 import BoardBar from './BoardBar'
 import BoardContent from './BoardContent'
+import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
+import Typography from '@mui/material/Typography'
 // import { mockData } from '~/apis/mock_data'
 import { useEffect, useState } from 'react'
-import { fetchBoardDetailsAPI, createNewColumnAPI, createNewCardAPI, updateBoardDetailsAPI } from '~/apis'
+import {
+  fetchBoardDetailsAPI,
+  createNewColumnAPI,
+  createNewCardAPI,
+  updateBoardDetailsAPI,
+  updateColumnDetailsAPI
+} from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
+import { mapOrder } from '~/utils/sorters'
 
 function Board() {
   const [board, setBoard] = useState(null)
@@ -16,11 +26,19 @@ function Board() {
   useEffect(() => {
     //Call API
     fetchBoardDetailsAPI(boardId).then(board => {
+
+      // Sắp xếp lại mảng columns luôn ở đây trc khi truyền xuống component dưới
+      board.columns = mapOrder(board.columns, board.columnOrderIds, '_id')
+
       //Khi render lần đầu Column nào rỗng thì thêm dummy card cho nó để kéo thả
       board.columns.forEach(column => {
         if (isEmpty(column.cards)) {
           column.cards = [generatePlaceholderCard(column)]
           column.cardOrderIds = [generatePlaceholderCard(column)._id]
+        }
+        else {
+          // Sắp xếp lại mảng cards luôn ở đây trc khi truyền xuống component dưới
+          column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
         }
       })
       setBoard(board)
@@ -60,10 +78,11 @@ function Board() {
       columnToUpdate.cardOrderIds.push(createdCard._id)
     }
     setBoard(updatedBoard)
+    // console.log('set xong van chay')
   }
 
-  // API for updating column order after drag and drop columns
-  const moveColumns = async (dndOrderedColumns) => {
+  // API call for updating column order after drag and drop columns
+  const moveColumns = (dndOrderedColumns) => {
     const dndOrderedColumnIds = dndOrderedColumns.map(column => column._id)
 
     // Cập nhật state board
@@ -73,9 +92,48 @@ function Board() {
     setBoard(updatedBoard)
 
     // Gọi API update board
-    await updateBoardDetailsAPI(updatedBoard._id, {
+    // ko dùng await (khi nào cần hứng kết quả sau khi gọi để làm gì đấy
+    // mới cần await hoặc là .then .catch)
+    /**
+     * Khác với create
+     * Create phải lấy kết quả của api trả về rồi hiển thị
+     * Update hiển thị trước (dòng setBoard ở trên) rồi mới gửi updated
+     * board đến DB
+     */
+    updateBoardDetailsAPI(updatedBoard._id, {
       columnOrderIds: updatedBoard.columnOrderIds
     })
+  }
+
+  // API call for update card order after dnd cards in the same column
+  const moveCardsInSameColumn = (dndOrderedCards, dndOrderedCardIds, columnId) => {
+    // Cập nhật state board
+    const updatedBoard = { ...board }
+    const columnToUpdate = updatedBoard.columns.find(column => column._id === columnId)
+    if (columnToUpdate) {
+      columnToUpdate.cards = dndOrderedCards
+      columnToUpdate.cardOrderIds = dndOrderedCardIds
+    }
+    setBoard(updatedBoard)
+
+    // Gọi API update board
+    updateColumnDetailsAPI(columnId, {
+      cardOrderIds: dndOrderedCardIds
+    })
+  }
+
+  if (!board) {
+    return (
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2, width: '100vw', height: '100vh'
+      }}>
+        <CircularProgress />
+        <Typography>Loading Board</Typography>
+      </Box>
+    )
   }
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
@@ -85,7 +143,8 @@ function Board() {
         board={board}
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
-        moveColumns={moveColumns}/>
+        moveColumns={moveColumns}
+        moveCardsInSameColumn={moveCardsInSameColumn}/>
       {/* <BoardBar board={mockData?.board}/>
       <BoardContent board={mockData?.board}/> */}
     </Container>

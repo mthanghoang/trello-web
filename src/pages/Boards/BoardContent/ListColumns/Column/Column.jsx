@@ -17,11 +17,9 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import { Button, ListItemIcon, ListItemText } from '@mui/material'
 import ListCards from './ListCards/ListCards'
-import { mapOrder } from '~/utils/sorters'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
-import theme from '~/theme'
 
 
 function Column({ column_data, createNewCard }) {
@@ -44,7 +42,7 @@ function Column({ column_data, createNewCard }) {
   }
 
   // CARDS ORDERING
-  const orderedCards = mapOrder(column_data?.cards, column_data?.cardOrderIds, '_id')
+  const orderedCards = column_data.cards // đổi hết orderedCards thành column_data.cards cũng được vì sắp xếp hết ở component trên rồi
 
   // MENU DROPDOWN
   const [anchorEl, setAnchorEl] = useState(null)
@@ -72,7 +70,10 @@ function Column({ column_data, createNewCard }) {
      * gọi lên props function createNewColumn nằm ở component cha cao nhất (boards/_id.jsx)
      * về sau có thể đưa dữ liệu Board ra ngoài Redux Global Store
      * và có thể gọi luôn API ở đây thay vì gọi ngược nhiều cấp lên component cao nhất
-     */
+    */
+    // dùng await khi nào cần hứng kết quả sau khi gọi để làm gì đấy
+    // (hoặc .then .catch)
+    // trong trg hợp này dùng để tránh flickering giao diện
     await createNewCard(newCardData)
     // clear input and close toggle
     toggleNewCardForm()
@@ -230,7 +231,7 @@ function Column({ column_data, createNewCard }) {
                   width: '100%',
                   '& label': { color: 'grey.500' },
                   '& label.Mui-focused': { color: 'grey.500' },
-                  '& input': { color: theme => theme.palette.mode === 'light' ? 'text.primary' : 'primary.main'},
+                  '& input': { color: theme => theme.palette.mode === 'light' ? 'text.primary' : 'primary.main' },
                   // '& textarea': { color: 'white' },
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': { borderColor: 'grey.500' },

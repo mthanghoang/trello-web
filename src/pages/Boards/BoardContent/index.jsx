@@ -1,6 +1,5 @@
 import Box from '@mui/system/Box'
 import ListColumns from './ListColumns/ListColumns'
-import { mapOrder } from '~/utils/sorters'
 import {
   DndContext,
   PointerSensor,
@@ -26,7 +25,7 @@ const ITEM_TYPE = {
   CARD: 'ITEM_TYPE_CARD'
 }
 
-function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
+function BoardContent({ board, createNewColumn, createNewCard, moveColumns, moveCardsInSameColumn }) {
   // Sensors
   //yêu cầu chuột di chuyển 3px để kích hoạt dnd, fix lỗi click bị gọi event
   const mouseSensor = useSensor(MouseSensor, {
@@ -50,7 +49,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
 
   useEffect(() => {
     // arrange the columns based on column order
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
+    setOrderedColumns(board.columns) // đổi hết orderedColumns thành board.columns cũng được vì sắp xếp hết ở component trên rồi
   }, [board])
 
   const findColumnByCardId = (cardId) => {
@@ -180,6 +179,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
         const newIndex = targetColumn?.cards?.findIndex(card => card._id === overCard._id)
         //xếp lại thứ tự cards trong column
         const dndOrderedCards = arrayMove(targetColumn?.cards, oldIndex, newIndex)
+        const dndOrderedCardIds = dndOrderedCards.map(card => card._id)
 
         // update state cho orderedColumns
         setOrderedColumns(originColumns => {
@@ -188,9 +188,11 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
           const clonedColumn = clonedColumns.find(column => column._id === targetColumn._id)
 
           clonedColumn.cards = dndOrderedCards
-          clonedColumn.cardOrderIds = dndOrderedCards.map(card => card._id)
+          clonedColumn.cardOrderIds = dndOrderedCardIds
           return clonedColumns
         })
+
+        moveCardsInSameColumn(dndOrderedCards, dndOrderedCardIds, targetColumn._id)
       }
       //nếu kéo thả card khác column
       // if (activeCard.columnId !== overCard.columnId) {
@@ -211,14 +213,12 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
         const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
         const newIndex = orderedColumns.findIndex(column => column._id === over.id)
         const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
+        setOrderedColumns(dndOrderedColumns)
+
         // update the columnOrderIds to DB (used for future API calls)
         // ko dùng await ở đây vì vẫn muốn setOrderedColumns execute ngay để hiển thị ngay order mới
         // trước khi DB kịp cập nhật order mới
         moveColumns(dndOrderedColumns)
-
-        setOrderedColumns(dndOrderedColumns)
-
-        // console.log('Column order sau khi dnd: ', board.columnOrderIds)
         return
       }
     }

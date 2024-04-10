@@ -53,6 +53,9 @@ function ListColumns({ columns, createNewColumn, createNewCard }) {
      * về sau có thể đưa dữ liệu Board ra ngoài Redux Global Store
      * và có thể gọi luôn API ở đây thay vì gọi ngược nhiều cấp lên component cao nhất
      */
+    // dùng await khi nào cần hứng kết quả sau khi gọi để làm gì đấy
+    // (hoặc .then .catch)
+    // trong trg hợp này dùng để tránh flickering giao diện
     await createNewColumn(newColumnData)
     // clear input and close toggle
     toggleNewColumnForm()

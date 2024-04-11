@@ -13,7 +13,8 @@ import {
   createNewColumnAPI,
   createNewCardAPI,
   updateBoardDetailsAPI,
-  updateColumnDetailsAPI
+  updateColumnDetailsAPI,
+  moveCardToDifferentColumnAPI
 } from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
@@ -76,6 +77,10 @@ function Board() {
     if (columnToUpdate) {
       columnToUpdate.cards.push(createdCard)
       columnToUpdate.cardOrderIds.push(createdCard._id)
+
+      // sau khi thêm card thì phải bỏ dummy card đi
+      columnToUpdate.cards = columnToUpdate.cards.filter(card => !card.FE_PlaceholderCard)
+      columnToUpdate.cardOrderIds = columnToUpdate.cardOrderIds.filter(cardId => !cardId.includes('placeholder-card'))
     }
     setBoard(updatedBoard)
     // console.log('set xong van chay')
@@ -86,10 +91,10 @@ function Board() {
     const dndOrderedColumnIds = dndOrderedColumns.map(column => column._id)
 
     // Cập nhật state board
-    const updatedBoard = { ...board }
-    updatedBoard.columns = dndOrderedColumns
-    updatedBoard.columnOrderIds = dndOrderedColumnIds
-    setBoard(updatedBoard)
+    // const updatedBoard = { ...board }
+    // updatedBoard.columns = dndOrderedColumns
+    // updatedBoard.columnOrderIds = dndOrderedColumnIds
+    // setBoard(updatedBoard)
 
     // Gọi API update board
     // ko dùng await (khi nào cần hứng kết quả sau khi gọi để làm gì đấy
@@ -97,28 +102,55 @@ function Board() {
     /**
      * Khác với create
      * Create phải lấy kết quả của api trả về rồi hiển thị
-     * Update hiển thị trước (dòng setBoard ở trên) rồi mới gửi updated
-     * board đến DB
+     * Update hiển thị trước (set lại state ở component con khi dnd) rồi mới gửi updated
+     * data đến DB
      */
-    updateBoardDetailsAPI(updatedBoard._id, {
-      columnOrderIds: updatedBoard.columnOrderIds
+    updateBoardDetailsAPI(board._id, {
+      columnOrderIds: dndOrderedColumnIds
     })
   }
 
   // API call for update card order after dnd cards in the same column
-  const moveCardsInSameColumn = (dndOrderedCards, dndOrderedCardIds, columnId) => {
+  const moveCardsInSameColumn = (dndOrderedCardIds, columnId) => {
     // Cập nhật state board
-    const updatedBoard = { ...board }
-    const columnToUpdate = updatedBoard.columns.find(column => column._id === columnId)
-    if (columnToUpdate) {
-      columnToUpdate.cards = dndOrderedCards
-      columnToUpdate.cardOrderIds = dndOrderedCardIds
-    }
-    setBoard(updatedBoard)
+    // const updatedBoard = { ...board }
+    // const columnToUpdate = updatedBoard.columns.find(column => column._id === columnId)
+    // if (columnToUpdate) {
+    //   columnToUpdate.cards = dndOrderedCards
+    //   columnToUpdate.cardOrderIds = dndOrderedCardIds
+    // }
+    // setBoard(updatedBoard)
 
     // Gọi API update board
+    // ko dùng await (khi nào cần hứng kết quả sau khi gọi để làm gì đấy
+    // mới cần await hoặc là .then .catch)
+    /**
+     * Khác với create
+     * Create phải lấy kết quả của api trả về rồi hiển thị
+     * Update hiển thị trước (set lại state ở component con khi dnd) rồi mới gửi updated
+     * data đến DB
+     */
     updateColumnDetailsAPI(columnId, {
       cardOrderIds: dndOrderedCardIds
+    })
+  }
+
+  // API call for update columns after dnd cards in different columns
+  const moveCardToDifferentColumn = (activeCardId, activeColumnId, overColumnId, dndOrderedColumns) => {
+    /**
+     * B1: Cập nhật lại mảng cards và cardOrderIds của active column
+     * B2: Cập nhật lại mảng cards và cardOrderIds của over column
+     * B3: Cập nhật lại columnId của cái card bị kéo đi column khác
+     */
+
+
+    // API
+    moveCardToDifferentColumnAPI({
+      activeCardId,
+      activeColumnId,
+      activeCardOrderIds: dndOrderedColumns.find(c => c._id === activeColumnId)?.cardOrderIds,
+      overColumnId,
+      overCardOrderIds: dndOrderedColumns.find(c => c._id === overColumnId)?.cardOrderIds
     })
   }
 
@@ -144,7 +176,9 @@ function Board() {
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
         moveColumns={moveColumns}
-        moveCardsInSameColumn={moveCardsInSameColumn}/>
+        moveCardsInSameColumn={moveCardsInSameColumn}
+        moveCardToDifferentColumn={moveCardToDifferentColumn}
+      />
       {/* <BoardBar board={mockData?.board}/>
       <BoardContent board={mockData?.board}/> */}
     </Container>

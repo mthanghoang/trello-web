@@ -143,14 +143,13 @@ function Board() {
      * B3: Cập nhật lại columnId của cái card bị kéo đi column khác
      */
 
-
     // API
     moveCardToDifferentColumnAPI({
       activeCardId,
       activeColumnId,
-      activeCardOrderIds: dndOrderedColumns.find(c => c._id === activeColumnId)?.cardOrderIds,
+      activeCardOrderIds: dndOrderedColumns.find(c => c._id === activeColumnId)?.cardOrderIds.filter(cardId => !cardId.includes('placeholder-card')),
       overColumnId,
-      overCardOrderIds: dndOrderedColumns.find(c => c._id === overColumnId)?.cardOrderIds
+      overCardOrderIds: dndOrderedColumns.find(c => c._id === overColumnId)?.cardOrderIds.filter(cardId => !cardId.includes('placeholder-card'))
     })
   }
 

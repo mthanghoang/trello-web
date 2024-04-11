@@ -15,7 +15,12 @@ import { ConfirmProvider } from 'material-ui-confirm'
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
   <CssVarsProvider theme={theme}>
-    <ConfirmProvider>
+    <ConfirmProvider defaultOptions={{
+      allowClose: false,
+      dialogProps: { maxWidth: 'xs' },
+      confirmationButtonProps:{ color: 'error', variant: 'contained' },
+      cancellationButtonProps: { color: 'info', variant: 'outlined' }
+    }}>
       <CssBaseline />
       <App />
       <ToastContainer position='top-left' autoClose={1000}/>

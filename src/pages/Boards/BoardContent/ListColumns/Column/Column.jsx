@@ -23,7 +23,7 @@ import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
 
 
-function Column({ column_data, createNewCard }) {
+function Column({ column_data, createNewCard, deleteColumn }) {
 
   // DRAG AND DROP
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -85,11 +85,11 @@ function Column({ column_data, createNewCard }) {
   const confirmDeleteColumn = useConfirm()
   const handleDeleteColumn = () => {
     confirmDeleteColumn({
-      title: 'Remove list',
-      description: 'Are you sure you want to delete this list?'
+      title: 'Remove list?',
+      description: `Type "${column_data.title}" to confirm your action`,
+      confirmationKeyword: `${column_data.title}`
     }).then(() => {
-      console.log(column_data._id)
-      console.log(column_data.title)
+      deleteColumn(column_data._id)
     }).catch()
   }
 

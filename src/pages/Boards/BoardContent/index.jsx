@@ -29,7 +29,8 @@ function BoardContent({
   createNewCard,
   moveColumns,
   moveCardsInSameColumn,
-  moveCardToDifferentColumn
+  moveCardToDifferentColumn,
+  deleteColumn
 }) {
   // Sensors
   //yêu cầu chuột di chuyển 3px để kích hoạt dnd, fix lỗi click bị gọi event
@@ -315,7 +316,8 @@ function BoardContent({
         <ListColumns
           columns={orderedColumns}
           createNewColumn={createNewColumn}
-          createNewCard={createNewCard}/>
+          createNewCard={createNewCard}
+          deleteColumn={deleteColumn}/>
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ITEM_TYPE.COLUMN &&

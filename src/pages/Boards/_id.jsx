@@ -14,7 +14,8 @@ import {
   createNewCardAPI,
   updateBoardDetailsAPI,
   updateColumnDetailsAPI,
-  moveCardToDifferentColumnAPI
+  moveCardToDifferentColumnAPI,
+  deleteColumnAPI
 } from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
@@ -153,6 +154,17 @@ function Board() {
     })
   }
 
+  // API call for deleting column
+  const deleteColumn = (columnId) => {
+    console.log(columnId)
+    //cập nhật lại state board để hiển thị ko còn column nữa
+
+    //gọi API
+    deleteColumnAPI(columnId).then(res => {
+      console.log('🚀 ~ deleteColumnAPI ~ res:', res)
+    })
+  }
+
   if (!board) {
     return (
       <Box sx={{
@@ -177,6 +189,7 @@ function Board() {
         moveColumns={moveColumns}
         moveCardsInSameColumn={moveCardsInSameColumn}
         moveCardToDifferentColumn={moveCardToDifferentColumn}
+        deleteColumn={deleteColumn}
       />
       {/* <BoardBar board={mockData?.board}/>
       <BoardContent board={mockData?.board}/> */}

@@ -90,7 +90,7 @@ function Column({ column_data, createNewCard, deleteColumn }) {
       confirmationKeyword: `${column_data.title}`
     }).then(() => {
       deleteColumn(column_data._id)
-    }).catch()
+    }).catch(() => {})
   }
 
   return (

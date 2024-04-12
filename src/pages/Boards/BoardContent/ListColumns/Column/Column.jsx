@@ -20,9 +20,10 @@ import ListCards from './ListCards/ListCards'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
+import { useConfirm } from 'material-ui-confirm'
 
 
-function Column({ column_data, createNewCard }) {
+function Column({ column_data, createNewCard, deleteColumn }) {
 
   // DRAG AND DROP
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -79,6 +80,19 @@ function Column({ column_data, createNewCard }) {
     toggleNewCardForm()
     setNewCardTitle('')
   }
+
+  // Delete column
+  const confirmDeleteColumn = useConfirm()
+  const handleDeleteColumn = () => {
+    confirmDeleteColumn({
+      title: 'Remove list?',
+      description: `Type "${column_data.title}" to confirm your action`,
+      confirmationKeyword: `${column_data.title}`
+    }).then(() => {
+      deleteColumn(column_data._id)
+    }).catch(() => {})
+  }
+
   return (
     <div ref={setNodeRef} style={dndKitColumnStyle} {...attributes}>
       <Box
@@ -91,16 +105,18 @@ function Column({ column_data, createNewCard }) {
           height: 'fit-content',
           maxHeight: (theme) => `calc(${theme.custom.boardContentHeight} - ${theme.spacing(5)})`
         }}
-        onMouseDown={(e) => {e.stopPropagation()}}
+        {...listeners}
+        onMouseDown={(e) => {e.stopPropagation()}} // dòng này để ko bị drag to scroll khi kéo column hoặc card
       >
         {/* HEADER */}
-        <Box {...listeners} sx={{
+        <Box sx={{
           height: (theme) => theme.custom.columnHeaderHeight,
           p: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
-        }}>
+        }}
+        >
           <Typography variant='h7' sx={{
             fontWeight: 'bold',
             cursor: 'pointer',
@@ -119,19 +135,32 @@ function Column({ column_data, createNewCard }) {
             aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
-            onClick={handleClick} />
+            onClick={(e) => {
+              handleClick(e)
+              setOpenNewCardForm(false)
+            }}
+            data-no-dnd="true"
+            // onMouseDown={(e) => e.stopPropagation()}
+          />
           <Menu
             id="basic-menu-column-dropdown"
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
+            onClick={handleClose}
             MenuListProps={{
               'aria-labelledby': 'basic-column-dropdown'
             }}
+            data-no-dnd="true"
           >
-            <MenuItem>
+            <MenuItem onClick={toggleNewCardForm} sx={{
+              '&:hover': {
+                color: 'success.light',
+                '& .add-icon': { color: 'success.light' }
+              }
+            }}>
               <ListItemIcon>
-                <AddIcon fontSize="small" />
+                <AddIcon className='add-icon' fontSize="small" />
               </ListItemIcon>
               <ListItemText>Add new card</ListItemText>
             </MenuItem>
@@ -154,11 +183,18 @@ function Column({ column_data, createNewCard }) {
               <ListItemText>Paste</ListItemText>
             </MenuItem>
             <Divider />
-            <MenuItem>
+            <MenuItem
+              onClick={handleDeleteColumn}
+              sx={{
+                '&:hover': {
+                  color: 'warning.dark',
+                  '& .delete-icon': { color: 'error.dark' }
+                }
+              }}>
               <ListItemIcon>
-                <DeleteForeverIcon fontSize="small" />
+                <DeleteForeverIcon className='delete-icon' fontSize="small" />
               </ListItemIcon>
-              <ListItemText>Remove this column</ListItemText>
+              <ListItemText>Remove this list</ListItemText>
             </MenuItem>
             <MenuItem>
               <ListItemIcon>
@@ -194,10 +230,11 @@ function Column({ column_data, createNewCard }) {
                 justifyContent: 'flex-start'
               }}
               startIcon={<AddCardIcon />}
-              onClick={toggleNewCardForm}>
+              onClick={toggleNewCardForm}
+              data-no-dnd="true">
                 Add a card
               </Button>
-              <DragHandleIcon {...listeners} sx={{
+              <DragHandleIcon sx={{
                 cursor: 'grabbing',
                 color: 'grey.700',
                 borderRadius: '6px',
@@ -205,18 +242,14 @@ function Column({ column_data, createNewCard }) {
             </Box>
             :
             <Box sx={{
-              // maxWidth: '250px',
-              // minWidth: '250px',
               width: '100%',
               py: 1,
-              // borderRadius: '8px',
               height: 'fit-content',
               bgcolor: '#ffffff1d',
               display: 'flex',
               justifyContent: 'space-between',
-              // flexDirection: 'column',
               gap: 1
-            }} onMouseDown={(e) => e.stopPropagation()}>
+            }} onMouseDown={(e) => e.stopPropagation()} data-no-dnd="true">
               <TextField
                 id="outlined-search"
                 label="Enter card title..."
@@ -224,7 +257,7 @@ function Column({ column_data, createNewCard }) {
                 size='small'
                 type='text'
                 autoFocus
-                // multiline
+                // data-no-dnd="true"
                 value={newCardTitle}
                 onChange={(e) => setNewCardTitle(e.target.value)}
                 sx={{
@@ -256,6 +289,7 @@ function Column({ column_data, createNewCard }) {
                       backgroundColor: 'primary.dark'
                     }
                   }}
+                  // data-no-dnd="true"
                   variant='outlined'
                   onClick={addNewCard}>Add card
                 </Button>

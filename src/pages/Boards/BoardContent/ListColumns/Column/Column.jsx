@@ -119,19 +119,25 @@ function Column({ column_data, createNewCard, deleteColumn, editColumnTitle }) {
           bgcolor: 'grey.100',
           ml: 2,
           borderRadius: '6px',
+          display: 'flex',
+          flexDirection: 'column',
           height: 'fit-content',
-          maxHeight: (theme) => `calc(${theme.custom.boardContentHeight} - ${theme.spacing(5)})`
+          maxHeight: (theme) => `calc(${theme.custom.boardContentHeight} - ${theme.spacing(4)})`
         }}
         {...listeners}
         onMouseDown={(e) => {e.stopPropagation()}} // dòng này để ko bị drag to scroll khi kéo column hoặc card
       >
         {/* HEADER */}
         <Box sx={{
-          // height: (theme) => theme.custom.columnHeaderHeight,
+          // minHeight: (theme) => theme.custom.columnHeaderMinHeight,
+          // maxHeight: theme => theme.custom.columnHeaderMaxHeight,
           p: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
+          // display: 'flex',
+          // alignItems: 'center',
+          // justifyContent: 'space-between',
+          position: 'relative',
+          height: 'fit-content',
+          flexGrow: 1
         }}
         >
           <Box sx={{ width: '90%' }}>
@@ -154,7 +160,6 @@ function Column({ column_data, createNewCard, deleteColumn, editColumnTitle }) {
               :
               <TextField
                 id="outlined-search"
-                // label="Enter card title..."
                 variant="outlined"
                 size='small'
                 type='text'
@@ -189,7 +194,10 @@ function Column({ column_data, createNewCard, deleteColumn, editColumnTitle }) {
               color: 'grey.700',
               cursor: 'pointer',
               borderRadius: '6px',
-              '&:hover': { bgcolor: 'grey.300' }
+              '&:hover': { bgcolor: 'grey.300' },
+              position: 'absolute',
+              top: '12px',
+              right: '12px'
             }}
             id="basic-column-dropdown"
             aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
@@ -266,15 +274,17 @@ function Column({ column_data, createNewCard, deleteColumn, editColumnTitle }) {
         </Box>
 
         {/* LIST CARDs */}
-        <ListCards cards={orderedCards} openNewCardForm/>
+        <ListCards cards={orderedCards}/>
 
         {/* FOOTER */}
         <Box sx={{
           // maxHeight: (theme) => theme.custom.columnFooterMaxHeight,
-          minHeight: (theme) => theme.custom.columnFooterMinHeight,
+          // minHeight: (theme) => theme.custom.columnFooterMinHeight,
           display: 'flex',
           alignItems: 'center',
-          px: '6px'
+          px: '6px',
+          height: 'fit-content',
+          flexGrow: 1
         }}>
           {!openNewCardForm
             ?
@@ -283,11 +293,13 @@ function Column({ column_data, createNewCard, deleteColumn, editColumnTitle }) {
               height: '100%',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between'
+              justifyContent: 'space-between',
+              py: 1
             }}>
               <Button sx={{
                 flexGrow: 1,
-                justifyContent: 'flex-start'
+                justifyContent: 'flex-start',
+                '&:hover': { bgcolor: 'grey.300' }
               }}
               startIcon={<AddCardIcon />}
               onClick={toggleNewCardForm}
@@ -327,8 +339,7 @@ function Column({ column_data, createNewCard, deleteColumn, editColumnTitle }) {
                   width: '100%',
                   '& label': { color: 'grey.500' },
                   '& label.Mui-focused': { color: 'grey.500' },
-                  '& input': { color: theme => theme.palette.mode === 'light' ? 'text.primary' : 'primary.main' },
-                  // '& textarea': { color: 'white' },
+                  '& textarea': { color: theme => theme.palette.mode === 'light' ? 'text.primary' : 'primary.main' },
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': { borderColor: 'grey.500' },
                     '&:hover fieldset': { borderColor: 'grey.500' },

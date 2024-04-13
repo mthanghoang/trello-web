@@ -14,9 +14,12 @@ function ListCards({ cards }) {
         overflowX: 'hidden',
         overflowY: 'auto',
         paddingBottom: '2px',
-        maxHeight: (theme) => `calc(
-          ${theme.custom.boardContentHeight} - ${theme.spacing(5)} -
-          ${theme.custom.columnHeaderHeight} - ${theme.custom.columnFooterMaxHeight})`,
+        // flexGrow: 1,
+        // maxHeight: (theme) => `calc(
+        //   ${theme.custom.boardContentHeight}
+        //   - ${theme.spacing(4)}
+        //   - ${theme.custom.columnHeaderMaxHeight}
+        //   - ${theme.custom.columnFooterMaxHeight})`,
         '&::-webkit-scrollbar-thumb': {
           backgroundColor: '#ced0da',
           borderRadius: '8px'

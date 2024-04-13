@@ -3,6 +3,7 @@ import AttachmentIcon from '@mui/icons-material/Attachment'
 import ModeCommentIcon from '@mui/icons-material/ModeComment'
 import Button from '@mui/material/Button'
 import { Card as MuiCard } from '@mui/material'
+import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
@@ -44,8 +45,11 @@ function Card({ card_data }) {
         display: card_data?.FE_PlaceholderCard ? 'none' : 'block',
         // overflow: card_data?.FE_PlaceholderCard ? 'hidden' : 'unset',
         // height: card_data?.FE_PlaceholderCard ? '0px' : 'unset',
-        '&:hover': { border: '1px solid #3498db' },
-        border: '1px solid transparent'
+        '&:hover': { border: theme => theme.palette.mode === 'light'
+          ? '2px solid #3498db'
+          : '2px solid #d35400' },
+        border: '2px solid transparent',
+        borderRadius: '8px'
       }}
     >
       {card_data?.cover &&
@@ -56,9 +60,26 @@ function Card({ card_data }) {
       }
       <CardContent sx={{
         p: 1.5,
-        '&:last-child': { p: 1.5 }
+        '&:last-child': { p: 1.5 },
+        position: 'relative',
+        '&:hover svg': { display: 'inline-block' }
       }}>
         <Typography sx={{ overflowWrap: 'break-word' }}>{card_data?.title}</Typography>
+        <ModeEditOutlineIcon sx={{
+          display: 'none',
+          fontSize: 'large',
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          bgcolor: theme => theme.palette.mode === 'light' ? '#fff' : '#1e1e1e',
+          // bgcolor: 'red',
+          boxSizing: 'content-box',
+          borderRadius: '13px',
+          padding: '4px',
+          '&:hover': {
+            bgcolor: theme => theme.palette.mode === 'light' ? 'grey.200' : 'grey.700'
+          }
+        }}></ModeEditOutlineIcon>
       </CardContent>
 
       {renderCardActions() &&

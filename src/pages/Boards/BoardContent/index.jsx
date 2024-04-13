@@ -30,7 +30,8 @@ function BoardContent({
   moveColumns,
   moveCardsInSameColumn,
   moveCardToDifferentColumn,
-  deleteColumn
+  deleteColumn,
+  editColumnTitle
 }) {
   // Sensors
   //yêu cầu chuột di chuyển 3px để kích hoạt dnd, fix lỗi click bị gọi event
@@ -81,6 +82,17 @@ function BoardContent({
     const { active, over } = e
 
     if (!active || !over) return
+
+    if (activeDragItemType === ITEM_TYPE.COLUMN) {
+      if (active.id !== over.id) {
+        const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
+        const newIndex = orderedColumns.findIndex(column => column._id === over.id)
+        const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
+        setOrderedColumns(dndOrderedColumns)
+
+        return
+      }
+    }
 
     if (activeDragItemType === ITEM_TYPE.CARD) {
       const activeCard = activeDragItemData
@@ -317,7 +329,8 @@ function BoardContent({
           columns={orderedColumns}
           createNewColumn={createNewColumn}
           createNewCard={createNewCard}
-          deleteColumn={deleteColumn}/>
+          deleteColumn={deleteColumn}
+          editColumnTitle={editColumnTitle}/>
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ITEM_TYPE.COLUMN &&

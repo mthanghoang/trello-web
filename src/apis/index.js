@@ -13,11 +13,11 @@ export const updateBoardDetailsAPI = async (boardId, dataToUpdate) => {
   return (await axios.put(`${API_ROOT}/v1/boards/${boardId}`, dataToUpdate)).data
 }
 
-//Column
 export const moveCardToDifferentColumnAPI = async (dataToUpdate) => {
   return (await axios.put(`${API_ROOT}/v1/boards/supports/moving_card`, dataToUpdate)).data
 }
 
+//Column
 export const updateColumnDetailsAPI = async (columnId, dataToUpdate) => {
   return (await axios.put(`${API_ROOT}/v1/columns/${columnId}`, dataToUpdate)).data
 }

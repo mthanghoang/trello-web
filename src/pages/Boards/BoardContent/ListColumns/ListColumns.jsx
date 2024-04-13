@@ -8,7 +8,13 @@ import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 
-function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) {
+function ListColumns({
+  columns,
+  createNewColumn,
+  createNewCard,
+  deleteColumn,
+  editColumnTitle
+}) {
   // DRAG SCREEN TO SCROLL HORIZONTALLY
   const myRef = useRef()
   const ele = myRef.current
@@ -90,7 +96,8 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) 
             key={column._id}
             column_data={column}
             createNewCard={createNewCard}
-            deleteColumn={deleteColumn}/>
+            deleteColumn={deleteColumn}
+            editColumnTitle={editColumnTitle}/>
         )}
 
         {/* Add new list button here */}

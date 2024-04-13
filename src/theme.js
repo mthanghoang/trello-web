@@ -21,8 +21,9 @@ import { experimental_extendTheme as extendTheme } from '@mui/material/styles'
 const APP_BAR_HEIGHT = '60px'
 const BOARD_BAR_HEIGHT = '58px'
 const BOARD_CONTENT_HEIGHT = `calc(100vh - ${APP_BAR_HEIGHT} - ${BOARD_BAR_HEIGHT})`
-const COLUMN_HEADER_HEIGHT = '50px'
-const COLUMN_FOOTER_HEIGHT = '56px'
+const COLUMN_HEADER_HEIGHT = '172px'
+const COLUMN_FOOTER_MAX_HEIGHT = '174px'
+const COLUMN_FOOTER_MIN_HEIGHT = '56px'
 
 const theme = extendTheme({
   custom: {
@@ -30,7 +31,8 @@ const theme = extendTheme({
     boardBarHeight: BOARD_BAR_HEIGHT,
     boardContentHeight: BOARD_CONTENT_HEIGHT,
     columnHeaderHeight: COLUMN_HEADER_HEIGHT,
-    columnFooterHeight: COLUMN_FOOTER_HEIGHT
+    columnFooterMaxHeight: COLUMN_FOOTER_MAX_HEIGHT,
+    columnFooterMinHeight: COLUMN_FOOTER_MIN_HEIGHT
   },
   colorSchemes: {
     light: {
@@ -59,8 +61,8 @@ const theme = extendTheme({
       styleOverrides: {
         body: {
           '*::-webkit-scrollbar': {
-            width: '6px',
-            height: '6px'
+            width: '4px',
+            height: '4px'
           },
           '*::-webkit-scrollbar-thumb': {
             backgroundColor: '#dcdde1',
@@ -83,15 +85,15 @@ const theme = extendTheme({
     },
     MuiInputLabel: {
       styleOverrides: {
-        root: ({ theme }) => ({
+        root: {
           // color: theme.palette.primary.main,
           fontSize: '0.875rem'
-        })
+        }
       }
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: ({ theme }) => ({
+        root: {
           // color: theme.palette.primary.main,
           fontSize: '0.875rem',
           // '.MuiOutlinedInput-notchedOutline': {
@@ -105,17 +107,17 @@ const theme = extendTheme({
           '& fieldset': { borderWidth: '1px !important' },
           // '&:hover fieldset': { borderWidth: '2px !important' },
           '&.Mui-focused fieldset': { borderWidth: '1px !important' }
-        })
+        }
       }
     },
     MuiTypography: {
       styleOverrides: {
-        root: ({ theme }) => ({
+        root: {
           // color: theme.palette.primary.main,
           '&.MuiTypography-body1': { fontSize: '0.875rem' }
-        })
+        }
       }
-    },
+    }
   }
   // ...other properties
 })

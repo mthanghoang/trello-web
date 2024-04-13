@@ -41,9 +41,11 @@ function Card({ card_data }) {
         cursor: 'pointer',
         boxShadow: '0 2px 2px rgba(0, 0, 0, 0.3)',
         overflow: 'unset',
-        display: card_data?.FE_PlaceholderCard ? 'none' : 'block'
+        display: card_data?.FE_PlaceholderCard ? 'none' : 'block',
         // overflow: card_data?.FE_PlaceholderCard ? 'hidden' : 'unset',
         // height: card_data?.FE_PlaceholderCard ? '0px' : 'unset',
+        '&:hover': { border: '1px solid #3498db' },
+        border: '1px solid transparent'
       }}
     >
       {card_data?.cover &&
@@ -56,7 +58,7 @@ function Card({ card_data }) {
         p: 1.5,
         '&:last-child': { p: 1.5 }
       }}>
-        <Typography>{card_data?.title}</Typography>
+        <Typography sx={{ overflowWrap: 'break-word' }}>{card_data?.title}</Typography>
       </CardContent>
 
       {renderCardActions() &&

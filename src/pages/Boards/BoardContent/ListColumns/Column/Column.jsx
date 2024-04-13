@@ -22,8 +22,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
 
-
-function Column({ column_data, createNewCard, deleteColumn }) {
+function Column({ column_data, createNewCard, deleteColumn, editColumnTitle }) {
 
   // DRAG AND DROP
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -85,12 +84,30 @@ function Column({ column_data, createNewCard, deleteColumn }) {
   const confirmDeleteColumn = useConfirm()
   const handleDeleteColumn = () => {
     confirmDeleteColumn({
-      title: 'Remove list?',
-      description: `Type "${column_data.title}" to confirm your action`,
-      confirmationKeyword: `${column_data.title}`
+      title: 'Remove list',
+      description: 'Are you sure you want to remove this list?'
     }).then(() => {
       deleteColumn(column_data._id)
     }).catch(() => {})
+  }
+
+  // Click To Edit Column Title
+  const [isEditable, setIsEditable] = useState(false)
+  const [columnTitle, setColumnTitle] = useState(column_data?.title)
+  const toggleClickToEdit = () => {
+    setIsEditable(!isEditable)
+  }
+  const handleEditColumnTitle = () => {
+    if (!columnTitle) {
+      setColumnTitle(column_data.title)
+      return
+    }
+
+    if (columnTitle !== column_data.title) {
+      editColumnTitle(column_data._id, columnTitle)
+      // setColumnTitleOld(columnTitle)
+      return
+    }
   }
 
   return (
@@ -110,19 +127,62 @@ function Column({ column_data, createNewCard, deleteColumn }) {
       >
         {/* HEADER */}
         <Box sx={{
-          height: (theme) => theme.custom.columnHeaderHeight,
-          p: 2,
+          // height: (theme) => theme.custom.columnHeaderHeight,
+          p: 1,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
         }}
         >
-          <Typography variant='h7' sx={{
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            color: 'grey.700'
-          }}>
-            {column_data?.title}</Typography>
+          <Box sx={{ width: '90%' }}>
+            {!isEditable
+              ?
+              <Typography
+                variant='subtitle1'
+                sx={{
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  color: 'grey.700',
+                  ml: '14px',
+                  py: '8px',
+                  overflowWrap: 'break-word',
+                  lineHeight: '1.25'
+                }}
+                onClick={toggleClickToEdit}
+              >
+                {columnTitle}</Typography>
+              :
+              <TextField
+                id="outlined-search"
+                // label="Enter card title..."
+                variant="outlined"
+                size='small'
+                type='text'
+                autoFocus
+                multiline
+                inputProps={{ maxLength: 256 }}
+                onFocus={e => e.target.select()}
+                onBlur={() => {
+                  toggleClickToEdit()
+                  handleEditColumnTitle()
+                }}
+                data-no-dnd="true"
+                value={columnTitle}
+                // onChange={(e) => setColumnTitle(e.target.value)}
+                onInput={(e) => setColumnTitle(e.target.value)}
+                sx={{
+                  width: '100%',
+                  // '& input': { color: 'grey.700', fontWeight: 'bold', fontSize: '1rem' },
+                  '& .MuiOutlinedInput-root': {
+                    py: '8px',
+                    '& textarea': { color: 'grey.700', fontWeight: 'bold', fontSize: '1rem' },
+                    '& fieldset': { border: '1px solid #3498db !important', borderRadius: '8px' },
+                    '&:hover fieldset': { border: '2px solid #3498db !important', borderRadius: '8px' },
+                    '&.Mui-focused fieldset': { border: '2px solid #3498db !important', borderRadius: '8px' }
+                  }
+                }} />
+            }
+          </Box>
           <MoreHorizIcon
             fontSize='small'
             sx={{
@@ -210,10 +270,10 @@ function Column({ column_data, createNewCard, deleteColumn }) {
 
         {/* FOOTER */}
         <Box sx={{
-          height: (theme) => theme.custom.columnFooterHeight,
-          // display: 'flex',
-          // alignItems: 'center',
-          // py: 2,
+          // maxHeight: (theme) => theme.custom.columnFooterMaxHeight,
+          minHeight: (theme) => theme.custom.columnFooterMinHeight,
+          display: 'flex',
+          alignItems: 'center',
           px: '6px'
         }}>
           {!openNewCardForm
@@ -247,6 +307,7 @@ function Column({ column_data, createNewCard, deleteColumn }) {
               height: 'fit-content',
               bgcolor: '#ffffff1d',
               display: 'flex',
+              flexDirection: 'column',
               justifyContent: 'space-between',
               gap: 1
             }} onMouseDown={(e) => e.stopPropagation()} data-no-dnd="true">
@@ -257,6 +318,8 @@ function Column({ column_data, createNewCard, deleteColumn }) {
                 size='small'
                 type='text'
                 autoFocus
+                multiline
+                inputProps={{ maxLength: 256 }}
                 // data-no-dnd="true"
                 value={newCardTitle}
                 onChange={(e) => setNewCardTitle(e.target.value)}
@@ -277,7 +340,7 @@ function Column({ column_data, createNewCard, deleteColumn }) {
                 width: '100%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'flex-end',
+                justifyContent: 'flex-start',
                 gap: '4px'
               }}>
                 <Button

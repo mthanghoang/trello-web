@@ -170,6 +170,19 @@ function Board() {
     })
   }
 
+  // API call for editing column title
+  const editColumnTitle = async (columnId, newTitle) => {
+    // update board
+    const updatedBoard = { ...board }
+    const targetColumn = updatedBoard.columns.find(c => c._id === columnId)
+    targetColumn.title = newTitle
+    setBoard(updatedBoard)
+    // gọi API
+    updateColumnDetailsAPI(columnId, {
+      title: newTitle
+    })
+  }
+
   if (!board) {
     return (
       <Box sx={{
@@ -195,6 +208,7 @@ function Board() {
         moveCardsInSameColumn={moveCardsInSameColumn}
         moveCardToDifferentColumn={moveCardToDifferentColumn}
         deleteColumn={deleteColumn}
+        editColumnTitle={editColumnTitle}
       />
       {/* <BoardBar board={mockData?.board}/>
       <BoardContent board={mockData?.board}/> */}

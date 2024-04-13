@@ -16,7 +16,7 @@ function ListCards({ cards }) {
         paddingBottom: '2px',
         maxHeight: (theme) => `calc(
           ${theme.custom.boardContentHeight} - ${theme.spacing(5)} -
-          ${theme.custom.columnHeaderHeight} - ${theme.custom.columnFooterHeight})`,
+          ${theme.custom.columnHeaderHeight} - ${theme.custom.columnFooterMaxHeight})`,
         '&::-webkit-scrollbar-thumb': {
           backgroundColor: '#ced0da',
           borderRadius: '8px'

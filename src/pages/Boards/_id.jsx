@@ -15,7 +15,8 @@ import {
   updateBoardDetailsAPI,
   updateColumnDetailsAPI,
   moveCardToDifferentColumnAPI,
-  deleteColumnAPI
+  deleteColumnAPI,
+  deleteCardAPI
 } from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
@@ -183,6 +184,22 @@ function Board() {
     })
   }
 
+  // API call for deleting column
+  const deleteCard = (card) => {
+    //cập nhật lại state board để hiển thị ko còn card nữa
+    const updatedBoard = { ...board }
+    const targetColumn = updatedBoard.columns.find(c => c._id === card.columnId)
+    targetColumn.cards = targetColumn.cards.filter(c => c._id !== card._id)
+    targetColumn.cardOrderIds = targetColumn.cards.filter(id => id !== card._id)
+    if (isEmpty(targetColumn.cards)) {
+      targetColumn.cards = [generatePlaceholderCard(targetColumn)]
+      targetColumn.cardOrderIds = [generatePlaceholderCard(targetColumn)._id]
+    }
+    setBoard(updatedBoard)
+    //gọi API
+    deleteCardAPI(card._id)
+  }
+
   if (!board) {
     return (
       <Box sx={{
@@ -196,8 +213,11 @@ function Board() {
       </Box>
     )
   }
+
   return (
-    <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
+    <Container disableGutters maxWidth={false} sx={{
+      height: '100vh',
+      bgcolor: '#2ecc71' }}>
       <AppBar />
       <BoardBar board={board}/>
       <BoardContent
@@ -209,6 +229,7 @@ function Board() {
         moveCardToDifferentColumn={moveCardToDifferentColumn}
         deleteColumn={deleteColumn}
         editColumnTitle={editColumnTitle}
+        deleteCard={deleteCard}
       />
       {/* <BoardBar board={mockData?.board}/>
       <BoardContent board={mockData?.board}/> */}

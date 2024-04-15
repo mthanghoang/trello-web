@@ -22,7 +22,13 @@ import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
 
-function Column({ column_data, createNewCard, deleteColumn, editColumnTitle }) {
+function Column({
+  column_data,
+  createNewCard,
+  deleteColumn,
+  editColumnTitle,
+  deleteCard
+}) {
 
   // DRAG AND DROP
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -274,7 +280,7 @@ function Column({ column_data, createNewCard, deleteColumn, editColumnTitle }) {
         </Box>
 
         {/* LIST CARDs */}
-        <ListCards cards={orderedCards}/>
+        <ListCards cards={orderedCards} column={column_data} deleteCard={deleteCard}/>
 
         {/* FOOTER */}
         <Box sx={{

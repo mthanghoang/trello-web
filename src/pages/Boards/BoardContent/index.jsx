@@ -31,7 +31,8 @@ function BoardContent({
   moveCardsInSameColumn,
   moveCardToDifferentColumn,
   deleteColumn,
-  editColumnTitle
+  editColumnTitle,
+  deleteCard
 }) {
   // Sensors
   //yêu cầu chuột di chuyển 3px để kích hoạt dnd, fix lỗi click bị gọi event
@@ -330,7 +331,8 @@ function BoardContent({
           createNewColumn={createNewColumn}
           createNewCard={createNewCard}
           deleteColumn={deleteColumn}
-          editColumnTitle={editColumnTitle}/>
+          editColumnTitle={editColumnTitle}
+          deleteCard={deleteCard}/>
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ITEM_TYPE.COLUMN &&

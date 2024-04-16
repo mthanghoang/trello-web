@@ -10,16 +10,14 @@ import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
-import TextField from '@mui/material/TextField'
 import Backdrop from '@mui/material/Backdrop'
-import PaymentIcon from '@mui/icons-material/Payment'
-import DescriptionIcon from '@mui/icons-material/Description'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useConfirm } from 'material-ui-confirm'
 import { useState } from 'react'
+import CardDetailsModal from '~/components/CardDetailsModal'
 
-function Card({ card_data, column_data, deleteCard }) {
+function Card({ card_data, column_data, deleteCard, updateCard }) {
   const renderCardActions = () => {
     return !!card_data?.memberIds?.length || !!card_data?.comments?.length || !!card_data?.attachments?.length
   }
@@ -39,14 +37,12 @@ function Card({ card_data, column_data, deleteCard }) {
     opacity: isDragging ? 0.2 : undefined
   }
 
-  // Edit Card
+  // Edit card modal
   const [openEditCardModal, setOpenEditCardModal] = useState(false)
   const handleOpenEditCard = () => {
     setOpenEditCardModal(true)
   }
-  const handleCloseEditCard = () => {
-    setOpenEditCardModal(false)
-  }
+  const handleCloseEditCard = () => setOpenEditCardModal(false)
 
   // Delete card
   const confirmDeleteCard = useConfirm()
@@ -141,65 +137,7 @@ function Card({ card_data, column_data, deleteCard }) {
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openEditCardModal}
         onClick={handleCloseEditCard}>
-        <Box onClick={(e) => e.stopPropagation()} sx={{
-          bgcolor: '#f1f2f4',
-          padding: 2,
-          width: '70%',
-          borderRadius: '12px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 1
-        }}>
-          {/* TITLE */}
-          <Box sx={{
-            display: 'flex',
-            width: '100%'
-          }}>
-            <PaymentIcon fontSize='medium' sx={{ color: '#44546f' }} />
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography sx={{
-                fontWeight: 'bold',
-                color: 'grey.600',
-                ml: 1,
-                overflowWrap: 'anywhere',
-                lineHeight: '1.25'
-              }} variant='h6'>
-                {card_data.title}</Typography>
-              <Typography
-                sx={{ color: '#000', ml: 1, overflowWrap: 'anywhere' }}
-                variant='body1'>in list <b>{column_data?.title}</b></Typography>
-            </Box>
-          </Box>
-
-          {/* DESCRIPTION */}
-          <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <DescriptionIcon fontSize='medium' sx={{ color: '#44546f' }} />
-              <Typography sx={{
-                fontWeight: 500,
-                color: 'grey.600',
-                ml: 1,
-                overflowWrap: 'anywhere',
-                lineHeight: '1.25'
-              }} variant='subtitle1'>
-              Description</Typography>
-            </Box>
-            {!card_data.description
-              ?
-              <Box sx={{
-                ml: 4,
-                p: 1,
-                borderRadius: '8px',
-                cursor: 'pointer',
-                bgcolor: '#202930',
-                // '&:hover': {bgcolor: }
-              }}>
-                Add a more detailed description...</Box>
-              : null}
-          </Box>
-          <Box></Box>
-          <Box></Box>
-        </Box>
+        <CardDetailsModal card_data={card_data} column_data={column_data} updateCard={updateCard} />
       </Backdrop>
     </>
   )

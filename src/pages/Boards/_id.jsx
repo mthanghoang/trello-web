@@ -16,7 +16,8 @@ import {
   updateColumnDetailsAPI,
   moveCardToDifferentColumnAPI,
   deleteColumnAPI,
-  deleteCardAPI
+  deleteCardAPI,
+  updateCardDetailsAPI
 } from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
@@ -184,6 +185,23 @@ function Board() {
     })
   }
 
+  // API call for updating card (currently only card's title)
+  const updateCard = async (card, dataToUpdate) => {
+    // update board
+    const updatedBoard = { ...board }
+    const targetColumn = updatedBoard.columns.find(c => c._id === card.columnId)
+    const targetCard = targetColumn.cards.find(c => c._id === card._id)
+    if (dataToUpdate.title) {
+      targetCard.title = dataToUpdate.title
+    }
+    if (dataToUpdate.description) {
+      targetCard.description = dataToUpdate.description
+    }
+    setBoard(updatedBoard)
+    // gọi API
+    updateCardDetailsAPI(card._id, dataToUpdate)
+  }
+
   // API call for deleting column
   const deleteCard = (card) => {
     //cập nhật lại state board để hiển thị ko còn card nữa
@@ -230,6 +248,7 @@ function Board() {
         deleteColumn={deleteColumn}
         editColumnTitle={editColumnTitle}
         deleteCard={deleteCard}
+        updateCard={updateCard}
       />
       {/* <BoardBar board={mockData?.board}/>
       <BoardContent board={mockData?.board}/> */}

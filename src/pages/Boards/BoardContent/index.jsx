@@ -32,7 +32,8 @@ function BoardContent({
   moveCardToDifferentColumn,
   deleteColumn,
   editColumnTitle,
-  deleteCard
+  deleteCard,
+  updateCard
 }) {
   // Sensors
   //yêu cầu chuột di chuyển 3px để kích hoạt dnd, fix lỗi click bị gọi event
@@ -57,6 +58,9 @@ function BoardContent({
   // vì dragover đã update lại state nên dragend ko dùng tiếp đc
   const [columnBeforeDrag, setColumnBeforeDrag] = useState(null)
 
+  // state lưu over column lúc đầu trc khi bị update bởi dragover
+  const [overColumnBeforeDrag, setOverColumnBeforeDrag] = useState(null)
+
   const lastOverId = useRef(null)
 
   useEffect(() => {
@@ -69,7 +73,6 @@ function BoardContent({
   }
 
   const handleDragStart = (e) => {
-    // console.log(e)
     setActiveDragItemType(e?.active?.data?.current?.columnId
       ? ITEM_TYPE.CARD
       : ITEM_TYPE.COLUMN)
@@ -86,6 +89,9 @@ function BoardContent({
 
     if (activeDragItemType === ITEM_TYPE.COLUMN) {
       if (active.id !== over.id) {
+        // lưu lại giá trị over column trước khi bị set state ghi đè để dragend dùng
+        setOverColumnBeforeDrag(orderedColumns.find(c => c._id === over.id))
+
         const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
         const newIndex = orderedColumns.findIndex(column => column._id === over.id)
         const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
@@ -247,7 +253,7 @@ function BoardContent({
     }
 
     if (activeDragItemType === ITEM_TYPE.COLUMN) {
-      if (active.id !== over.id) {
+      if (overColumnBeforeDrag._id !== over.id) {
         const oldIndex = orderedColumns.findIndex(column => column._id === active.id)
         const newIndex = orderedColumns.findIndex(column => column._id === over.id)
         const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
@@ -332,7 +338,8 @@ function BoardContent({
           createNewCard={createNewCard}
           deleteColumn={deleteColumn}
           editColumnTitle={editColumnTitle}
-          deleteCard={deleteCard}/>
+          deleteCard={deleteCard}
+          updateCard={updateCard}/>
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ITEM_TYPE.COLUMN &&

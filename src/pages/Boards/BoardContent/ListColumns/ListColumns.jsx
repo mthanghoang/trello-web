@@ -14,7 +14,8 @@ function ListColumns({
   createNewCard,
   deleteColumn,
   editColumnTitle,
-  deleteCard
+  deleteCard,
+  updateCard
 }) {
   // DRAG SCREEN TO SCROLL HORIZONTALLY
   const myRef = useRef()
@@ -99,7 +100,8 @@ function ListColumns({
             createNewCard={createNewCard}
             deleteColumn={deleteColumn}
             editColumnTitle={editColumnTitle}
-            deleteCard={deleteCard}/>
+            deleteCard={deleteCard}
+            updateCard={updateCard}/>
         )}
 
         {/* Add new list button here */}

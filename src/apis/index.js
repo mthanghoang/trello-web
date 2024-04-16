@@ -38,3 +38,7 @@ export const createNewCardAPI = async (newCardData) => {
 export const deleteCardAPI = async (cardId) => {
   return (await axios.delete(`${API_ROOT}/v1/cards/${cardId}`)).data
 }
+
+export const updateCardDetailsAPI = async (cardId, dataToUpdate) => {
+  return (await axios.put(`${API_ROOT}/v1/cards/${cardId}`, dataToUpdate)).data
+}

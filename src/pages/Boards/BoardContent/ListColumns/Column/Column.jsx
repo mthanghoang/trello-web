@@ -27,7 +27,8 @@ function Column({
   createNewCard,
   deleteColumn,
   editColumnTitle,
-  deleteCard
+  deleteCard,
+  updateCard
 }) {
 
   // DRAG AND DROP
@@ -67,7 +68,7 @@ function Column({
       return
     }
 
-    // Gọi API create new column
+    // Gọi API create new card
     const newCardData = {
       title: newCardTitle,
       columnId: column_data._id
@@ -280,7 +281,7 @@ function Column({
         </Box>
 
         {/* LIST CARDs */}
-        <ListCards cards={orderedCards} column={column_data} deleteCard={deleteCard}/>
+        <ListCards cards={orderedCards} column={column_data} deleteCard={deleteCard} updateCard={updateCard}/>
 
         {/* FOOTER */}
         <Box sx={{
@@ -385,7 +386,7 @@ function Column({
                       bgcolor: 'grey.400'
                     } }}
                   onClick={() => {
-                    toggleNewCardForm(),
+                    toggleNewCardForm()
                     setNewCardTitle('')
                   }}
                 />

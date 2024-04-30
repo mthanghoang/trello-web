@@ -7,16 +7,16 @@ import AddIcon from '@mui/icons-material/Add'
 import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
+import { createNewColumnAPI } from '~/apis'
+import { generatePlaceholderCard } from '~/utils/formatters'
+import { useDispatch } from 'react-redux'
+import { boardSlice } from '~/redux/Board/boardSlice'
+import { useSelector } from 'react-redux'
+import { boardSelector } from '~/redux/selectors'
 
-function ListColumns({
-  columns,
-  createNewColumn,
-  createNewCard,
-  deleteColumn,
-  editColumnTitle,
-  deleteCard,
-  updateCard
-}) {
+function ListColumns({ columns }) {
+  const dispatch = useDispatch()
+  const boardId = useSelector(boardSelector)._id
   // DRAG SCREEN TO SCROLL HORIZONTALLY
   const myRef = useRef()
   const ele = myRef.current
@@ -54,7 +54,8 @@ function ListColumns({
 
     // Gọi API create new column
     const newColumnData = {
-      title: newColumnTitle
+      title: newColumnTitle,
+      boardId: boardId
     }
     /**
      * gọi lên props function createNewColumn nằm ở component cha cao nhất (boards/_id.jsx)
@@ -64,10 +65,19 @@ function ListColumns({
     // dùng await khi nào cần hứng kết quả sau khi gọi để làm gì đấy
     // (hoặc .then .catch)
     // trong trg hợp này dùng để tránh flickering giao diện
-    await createNewColumn(newColumnData)
+    // await createNewColumn(newColumnData)
+    const createdColumn = await createNewColumnAPI({ ...newColumnData })
+
     // clear input and close toggle
     toggleNewColumnForm()
     setNewColumnTitle('')
+
+    //Khi mới tạo column thì nó rỗng, thêm dummy card cho nó để kéo thả
+    createdColumn.cards = [generatePlaceholderCard(createdColumn)]
+    createdColumn.cardOrderIds = [generatePlaceholderCard(createdColumn)._id]
+
+    // Cập nhật redux store
+    dispatch(boardSlice.actions.addNewColumn(createdColumn))
   }
   return (
     /**
@@ -94,14 +104,7 @@ function ListColumns({
       >
         {/* Columns are displayed here */}
         {columns?.map(column =>
-          <Column
-            key={column._id}
-            column_data={column}
-            createNewCard={createNewCard}
-            deleteColumn={deleteColumn}
-            editColumnTitle={editColumnTitle}
-            deleteCard={deleteCard}
-            updateCard={updateCard}/>
+          <Column key={column._id} column_data={column} />
         )}
 
         {/* Add new list button here */}

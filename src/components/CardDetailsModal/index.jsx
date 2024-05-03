@@ -6,24 +6,34 @@ import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
 
 import { Button, TextField } from '@mui/material'
+import { useDispatch } from 'react-redux'
+import { boardSlice } from '~/redux/Board/boardSlice'
+import { updateCardDetailsAPI } from '~/apis'
 
 
-function CardDetailsModal({ card_data, column_data, updateCard }) {
+function CardDetailsModal({ card_data, column_data }) {
+  const dispatch = useDispatch()
   // Edit Card
   const [cardTitle, setCardTitle] = useState(card_data?.title)
   const [cardDescription, setCardDescription] = useState(card_data?.description)
   const [openEditDescription, setOpenEditDescription] = useState(false)
-  // const [descriptionExists, setDescriptionExists] = useState(!!cardDescription)
 
-  const handleEditCardTitle = () => {
+  const handleEditCardTitle = async () => {
     if (!cardTitle) {
       setCardTitle(card_data.title)
       return
     }
 
     if (cardTitle !== card_data.title) {
-      updateCard(card_data, { title: cardTitle })
-      // setCardTitleOld(cardTitle)
+      // Update Redux store
+      dispatch(boardSlice.actions.updateCard({
+        card: card_data,
+        title: cardTitle
+      }))
+      // API call
+      await updateCardDetailsAPI(card_data._id, {
+        title: cardTitle
+      })
       return
     }
   }
@@ -36,8 +46,11 @@ function CardDetailsModal({ card_data, column_data, updateCard }) {
     }
 
     if (cardDescription !== card_data?.description) {
-      updateCard(card_data, { description: cardDescription })
-      // setCardTitleOld(cardTitle)
+      // Update Redux store
+      dispatch(boardSlice.actions.updateCard({
+        card: card_data,
+        description: cardDescription
+      }))
       return
     }
   }

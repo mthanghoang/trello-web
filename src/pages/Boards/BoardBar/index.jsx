@@ -10,6 +10,8 @@ import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import PublicIcon from '@mui/icons-material/Public'
 import { capitalizeFirstLetter } from '~/utils/formatters'
+import { useSelector } from 'react-redux'
+import { boardSelector } from '~/redux/selectors'
 
 const CHIP_STYLES = {
   color: 'white',
@@ -23,7 +25,8 @@ const CHIP_STYLES = {
     backgroundColor: 'primary.dark'
   }
 }
-function BoardBar({ board }) {
+function BoardBar() {
+  const board = useSelector(boardSelector)
   return (
     <Box sx={{
       width: '100%',

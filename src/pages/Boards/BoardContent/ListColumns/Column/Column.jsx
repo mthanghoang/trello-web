@@ -21,16 +21,14 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
+import { createNewCardAPI, deleteColumnAPI, updateColumnDetailsAPI } from '~/apis'
+import { useDispatch, useSelector } from 'react-redux'
+import { boardSelector } from '~/redux/selectors'
+import { boardSlice } from '~/redux/Board/boardSlice'
 
-function Column({
-  column_data,
-  createNewCard,
-  deleteColumn,
-  editColumnTitle,
-  deleteCard,
-  updateCard
-}) {
-
+function Column({ column_data }) {
+  const board = useSelector(boardSelector)
+  const dispatch = useDispatch()
   // DRAG AND DROP
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column_data._id,
@@ -49,7 +47,7 @@ function Column({
   }
 
   // CARDS ORDERING
-  const orderedCards = column_data.cards // đổi hết orderedCards thành column_data.cards cũng được vì sắp xếp hết ở component trên rồi
+  // const orderedCards = column_data.cards // đổi hết orderedCards thành column_data.cards cũng được vì sắp xếp hết ở component trên rồi
 
   // MENU DROPDOWN
   const [anchorEl, setAnchorEl] = useState(null)
@@ -71,7 +69,8 @@ function Column({
     // Gọi API create new card
     const newCardData = {
       title: newCardTitle,
-      columnId: column_data._id
+      columnId: column_data._id,
+      boardId: board._id
     }
     /**
      * gọi lên props function createNewColumn nằm ở component cha cao nhất (boards/_id.jsx)
@@ -81,10 +80,15 @@ function Column({
     // dùng await khi nào cần hứng kết quả sau khi gọi để làm gì đấy
     // (hoặc .then .catch)
     // trong trg hợp này dùng để tránh flickering giao diện
-    await createNewCard(newCardData)
+    // await createNewCard(newCardData)
+    const createdCard = await createNewCardAPI({ ...newCardData })
+
     // clear input and close toggle
     toggleNewCardForm()
     setNewCardTitle('')
+
+    // Update Redux store
+    dispatch(boardSlice.actions.addNewCard(createdCard))
   }
 
   // Delete column
@@ -93,8 +97,12 @@ function Column({
     confirmDeleteColumn({
       title: 'Remove list',
       description: 'Are you sure you want to remove this list?'
-    }).then(() => {
-      deleteColumn(column_data._id)
+    }).then( async () => {
+      // update redux store
+      dispatch(boardSlice.actions.deleteColumn(column_data._id))
+      // deleteColumn(column_data._id)
+      // API CALL
+      await deleteColumnAPI(column_data._id)
     }).catch(() => {})
   }
 
@@ -104,15 +112,23 @@ function Column({
   const toggleClickToEdit = () => {
     setIsEditable(!isEditable)
   }
-  const handleEditColumnTitle = () => {
+  const handleEditColumnTitle = async () => {
     if (!columnTitle) {
       setColumnTitle(column_data.title)
       return
     }
 
     if (columnTitle !== column_data.title) {
-      editColumnTitle(column_data._id, columnTitle)
-      // setColumnTitleOld(columnTitle)
+      // Update redux store
+      dispatch(boardSlice.actions.editColumnTitle({
+        columnId: column_data._id,
+        title: columnTitle
+      }))
+
+      // API CALL
+      await updateColumnDetailsAPI(column_data._id, {
+        title: columnTitle
+      })
       return
     }
   }
@@ -281,8 +297,10 @@ function Column({
         </Box>
 
         {/* LIST CARDs */}
-        <ListCards cards={orderedCards} column={column_data} deleteCard={deleteCard} updateCard={updateCard}/>
-
+        <ListCards
+          cards={column_data.cards}
+          column={column_data}
+        />
         {/* FOOTER */}
         <Box sx={{
           // maxHeight: (theme) => theme.custom.columnFooterMaxHeight,

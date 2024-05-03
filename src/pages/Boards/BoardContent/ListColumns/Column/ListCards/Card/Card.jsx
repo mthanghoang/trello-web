@@ -16,8 +16,13 @@ import { CSS } from '@dnd-kit/utilities'
 import { useConfirm } from 'material-ui-confirm'
 import { useState } from 'react'
 import CardDetailsModal from '~/components/CardDetailsModal'
+import { useDispatch } from 'react-redux'
+import { boardSlice } from '~/redux/Board/boardSlice'
+import { deleteCardAPI } from '~/apis'
 
-function Card({ card_data, column_data, deleteCard, updateCard }) {
+function Card({ card_data, column_data }) {
+  const dispatch = useDispatch()
+
   const renderCardActions = () => {
     return !!card_data?.memberIds?.length || !!card_data?.comments?.length || !!card_data?.attachments?.length
   }
@@ -46,12 +51,16 @@ function Card({ card_data, column_data, deleteCard, updateCard }) {
 
   // Delete card
   const confirmDeleteCard = useConfirm()
-  const handleDeleteCard = () => {
+  const handleDeleteCard = async () => {
     confirmDeleteCard({
       title: 'Remove card',
       description: 'Are you sure you want to remove this card?'
-    }).then(() => {
-      deleteCard(card_data)
+    }).then(async () => {
+      // Update redux store
+      dispatch(boardSlice.actions.deleteCard(card_data))
+
+      // API call
+      await deleteCardAPI(card_data._id)
     }).catch(() => {})
   }
 
@@ -137,7 +146,7 @@ function Card({ card_data, column_data, deleteCard, updateCard }) {
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={openEditCardModal}
         onClick={handleCloseEditCard}>
-        <CardDetailsModal card_data={card_data} column_data={column_data} updateCard={updateCard} />
+        <CardDetailsModal card_data={card_data} column_data={column_data} />
       </Backdrop>
     </>
   )

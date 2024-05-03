@@ -53,7 +53,7 @@ function BoardContent() {
   const [columnBeforeDrag, setColumnBeforeDrag] = useState(null)
 
   // state lưu over column lúc đầu trc khi bị update bởi dragover
-  const [overColumnBeforeDrag, setOverColumnBeforeDrag] = useState(null)
+  // const [overColumnBeforeDrag, setOverColumnBeforeDrag] = useState(null)
 
   const lastOverId = useRef(null)
 
@@ -71,28 +71,32 @@ function BoardContent() {
     }
   }
 
+  let dndOrderedColumnsDragOver = []
   const handleDragOver = (e) => {
     const { active, over } = e
 
-    if (!active || !over) return
+    // if (!active || !over) return
 
     if (activeDragItemType === ITEM_TYPE.COLUMN) {
-      if (active.id !== over.id) {
-        // lưu lại giá trị over column trước khi bị set state ghi đè để dragend dùng
-        setOverColumnBeforeDrag(board.columns.find(c => c._id === over.id))
-
+      if (over) {
         const oldIndex = board.columns.findIndex(column => column._id === active.id)
         const newIndex = board.columns.findIndex(column => column._id === over.id)
-        const dndOrderedColumns = arrayMove(board.columns, oldIndex, newIndex)
+        dndOrderedColumnsDragOver = arrayMove(board.columns, oldIndex, newIndex)
+      }
+      // dispatch action
+      // dispatch(boardSlice.actions.moveColumn(dndOrderedColumns))
 
-        // dispatch action
-        dispatch(boardSlice.actions.moveColumn(dndOrderedColumns))
 
-        return
+      // return
+      // }
+      else {
+        dispatch(boardSlice.actions.moveColumn(dndOrderedColumnsDragOver))
       }
     }
 
     if (activeDragItemType === ITEM_TYPE.CARD) {
+      if (!active || !over) return
+
       const activeCard = activeDragItemData
       const overCard = over.data.current
       // tìm column tương ứng của từng card
@@ -157,10 +161,13 @@ function BoardContent() {
     }
   }
 
+  let dndOrderedColumnsDragEnd = []
   const handleDragEnd = (e) => {
     const { active, over } = e
-    if (!active || !over) return
+    // if (!active || !over) return
     if (activeDragItemType === ITEM_TYPE.CARD) {
+      if (!active || !over) return
+
       const activeCard = activeDragItemData
       const overCard = over.data.current
 
@@ -256,21 +263,30 @@ function BoardContent() {
     }
 
     if (activeDragItemType === ITEM_TYPE.COLUMN) {
-      if (overColumnBeforeDrag._id !== over.id) {
+      // if (overColumnBeforeDrag._id !== over.id) {
+      if (over && active.id !== over.id) {
         const oldIndex = board.columns.findIndex(column => column._id === active.id)
         const newIndex = board.columns.findIndex(column => column._id === over.id)
-        const dndOrderedColumns = arrayMove(board.columns, oldIndex, newIndex)
+        dndOrderedColumnsDragEnd = arrayMove(board.columns, oldIndex, newIndex)
 
         // DISPATCH ACTION UPDATE STORE
-        dispatch(boardSlice.actions.moveColumn(dndOrderedColumns))
+        dispatch(boardSlice.actions.moveColumn(dndOrderedColumnsDragEnd))
 
         // API
         updateBoardDetailsAPI(board._id, {
-          columnOrderIds: dndOrderedColumns.map(c => c._id)
+          columnOrderIds: dndOrderedColumnsDragEnd.map(c => c._id)
         })
         return
       }
+      if (!over) {
+        // API
+        updateBoardDetailsAPI(board._id, {
+          columnOrderIds: board.columnOrderIds
+        })
+      }
+      return
     }
+    // }
 
     setActiveDragItemData(null)
     setActiveDragItemType(null)

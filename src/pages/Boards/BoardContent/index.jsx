@@ -18,8 +18,7 @@ import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
 import { cloneDeep, isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formatters'
-import { useDispatch, useSelector } from 'react-redux'
-import { boardSelector } from '~/redux/selectors'
+import { useDispatch } from 'react-redux'
 import { boardSlice } from '~/redux/Board/boardSlice'
 import { moveCardToDifferentColumnAPI, updateBoardDetailsAPI, updateColumnDetailsAPI } from '~/apis'
 
@@ -28,8 +27,7 @@ const ITEM_TYPE = {
   CARD: 'ITEM_TYPE_CARD'
 }
 
-function BoardContent() {
-  const board = useSelector(boardSelector)
+function BoardContent({ board }) {
   const dispatch = useDispatch()
   // Sensors
   //yêu cầu chuột di chuyển 3px để kích hoạt dnd, fix lỗi click bị gọi event

@@ -3,10 +3,22 @@ import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar'
 import BoardBar from './BoardBar'
 import BoardContent from './BoardContent'
-// import CircularProgress from '@mui/material/CircularProgress'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { fetchBoardThunk } from '~/redux/Board/boardSlice'
+import CircularProgress from '@mui/material/CircularProgress'
+import { boardSelector } from '~/redux/selectors'
 
 function Board() {
-  // if (!board) {
+  const dispatch = useDispatch()
+  const boardId = '66138370b71c43201bb27685'
+  const board = useSelector(boardSelector)
+  useEffect(() => {
+    dispatch(fetchBoardThunk(boardId))
+  }, [])
+  // if (!loading) {
   //   return (
   //     <Box sx={{
   //       display: 'flex',
@@ -22,11 +34,26 @@ function Board() {
 
   return (
     <Container disableGutters maxWidth={false} sx={{
-      height: '100vh',
-      bgcolor: '#2ecc71' }}>
+      height: '100vh'
+    }}>
       <AppBar />
       <BoardBar />
-      <BoardContent />
+      {!board._id
+        ?
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 2,
+          width: '100%',
+          height: theme => theme.custom.boardContentHeight
+        }}>
+          <CircularProgress />
+          <Typography>Loading Board</Typography>
+        </Box>
+        :
+        <BoardContent board={board} />
+      }
       {/* <BoardBar board={mockData?.board}/>
       <BoardContent board={mockData?.board}/> */}
     </Container>

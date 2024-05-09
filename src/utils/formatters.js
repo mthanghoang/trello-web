@@ -16,3 +16,8 @@ export const generatePlaceholderCard = (column) => {
     FE_PlaceholderCard: true
   }
 }
+
+export const removeExtraSpaces = (str) => {
+  if (!str) return ''
+  return str.replace(/\s+/g, ' ').trim()
+}

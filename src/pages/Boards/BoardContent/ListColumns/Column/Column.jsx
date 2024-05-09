@@ -25,6 +25,7 @@ import { createNewCardAPI, deleteColumnAPI, updateColumnDetailsAPI } from '~/api
 import { useDispatch, useSelector } from 'react-redux'
 import { boardSelector } from '~/redux/selectors'
 import { boardSlice } from '~/redux/Board/boardSlice'
+import { removeExtraSpaces } from '~/utils/formatters'
 
 function Column({ column_data }) {
   const board = useSelector(boardSelector)
@@ -61,14 +62,25 @@ function Column({ column_data }) {
   const [newCardTitle, setNewCardTitle] = useState('')
 
   const addNewCard = async () => {
-    if (!newCardTitle) {
+    const title = removeExtraSpaces(newCardTitle)
+    if (!title) {
       toast.error('Please enter card title')
+      return
+    }
+
+    if (title.length < 3) {
+      toast.error('Card title must be at least 3 characters long')
+      return
+    }
+
+    if (title.length > 256) {
+      toast.error('Card title must be at most 256 characters long')
       return
     }
 
     // Gọi API create new card
     const newCardData = {
-      title: newCardTitle,
+      title: title,
       columnId: column_data._id,
       boardId: board._id
     }
@@ -106,28 +118,31 @@ function Column({ column_data }) {
     }).catch(() => {})
   }
 
-  // Click To Edit Column Title
+  // Edit Column Title
   const [isEditable, setIsEditable] = useState(false)
   const [columnTitle, setColumnTitle] = useState(column_data?.title)
   const toggleClickToEdit = () => {
     setIsEditable(!isEditable)
   }
   const handleEditColumnTitle = async () => {
-    if (!columnTitle) {
+    const title = removeExtraSpaces(columnTitle)
+    if (!title) {
       setColumnTitle(column_data.title)
       return
     }
 
-    if (columnTitle !== column_data.title) {
+    setColumnTitle(title)
+
+    if (title !== column_data.title) {
       // Update redux store
       dispatch(boardSlice.actions.editColumnTitle({
         columnId: column_data._id,
-        title: columnTitle
+        title: title
       }))
 
       // API CALL
       await updateColumnDetailsAPI(column_data._id, {
-        title: columnTitle
+        title: title
       })
       return
     }

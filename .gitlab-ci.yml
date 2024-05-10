@@ -10,5 +10,7 @@ build:
     script:
         - yarn -DskipTests=true
         - yarn build
+        - sudo rm -rf /data/trello-web/
+        - sudo mv -r ./dist/ /data/trello-web/
     tags:
         - server

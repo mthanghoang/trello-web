@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import { createNewColumnAPI } from '~/apis'
-import { generatePlaceholderCard } from '~/utils/formatters'
+import { generatePlaceholderCard, removeExtraSpaces } from '~/utils/formatters'
 import { useDispatch } from 'react-redux'
 import { boardSlice } from '~/redux/Board/boardSlice'
 import { useSelector } from 'react-redux'
@@ -26,7 +26,7 @@ function ListColumns({ columns }) {
   const handleMouseDown = (event) => {
     setIsDown(true)
     setStartX(event.pageX)
-    setScrollLeft(ele.scrollLeft)
+    setScrollLeft(ele?.scrollLeft)
   }
   const handleMouseUp = () => setIsDown(false)
 
@@ -46,15 +46,26 @@ function ListColumns({ columns }) {
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
   // về sau nhiều form có thể dùng react-hook-form
-  const addNewColumn = async () => {
-    if (!newColumnTitle) {
+  const handleAddNewColumn = async () => {
+    const title = removeExtraSpaces(newColumnTitle)
+    if (!title) {
       toast.error('Please enter list title')
+      return
+    }
+
+    if (title.length < 3) {
+      toast.error('List title must be at least 3 characters long')
+      return
+    }
+
+    if (title.length > 256) {
+      toast.error('List title must be at most 256 characters long')
       return
     }
 
     // Gọi API create new column
     const newColumnData = {
-      title: newColumnTitle,
+      title: title,
       boardId: boardId
     }
     /**
@@ -181,7 +192,7 @@ function ListColumns({ columns }) {
                     }
                   }}
                   variant='outlined'
-                  onClick={addNewColumn}>Add list
+                  onClick={handleAddNewColumn}>Add list
                 </Button>
                 <CloseIcon
                   // fontSize='medium'

@@ -26,6 +26,11 @@ export const boardSlice = createSlice({
     moveCard: (state, action) => {
       state.columns = action.payload
     },
+    editBoardInfo: (state, action) => {
+      state.title = action.payload.title
+      state.type = action.payload.type
+      state.description = action.payload.description
+    },
     addNewColumn: (state, action) => {
       state.columns.push(action.payload)
       state.columnOrderIds.push(action.payload._id)
@@ -81,11 +86,16 @@ export const boardSlice = createSlice({
       state.updatedAt = action.payload.updatedAt
       state._destroyed = action.payload._destroyed
     })
+      .addCase(fetchBoardThunk.rejected, (state, action) => {
+        // console.log('fetchBoardThunk.rejected: ', action.error)
+        throw action.error
+      })
   }
 })
 
 // thunk actions
 export const fetchBoardThunk = createAsyncThunk('board/fetchBoard', async (boardId) => {
+  // try {
   const board = await fetchBoardDetailsAPI(boardId)
 
   // Sắp xếp lại mảng columns luôn ở đây trc khi truyền xuống component dưới
@@ -103,4 +113,8 @@ export const fetchBoardThunk = createAsyncThunk('board/fetchBoard', async (board
     }
   })
   return board
+  // } catch (error) {
+  //   throw error
+  // }
+
 })

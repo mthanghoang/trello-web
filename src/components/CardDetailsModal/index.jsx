@@ -9,7 +9,7 @@ import { Button, TextField } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { boardSlice } from '~/redux/Board/boardSlice'
 import { updateCardDetailsAPI } from '~/apis'
-
+import { removeExtraSpaces } from '~/utils/formatters'
 
 function CardDetailsModal({ card_data, column_data }) {
   const dispatch = useDispatch()
@@ -19,20 +19,23 @@ function CardDetailsModal({ card_data, column_data }) {
   const [openEditDescription, setOpenEditDescription] = useState(false)
 
   const handleEditCardTitle = async () => {
-    if (!cardTitle) {
+    const title = removeExtraSpaces(cardTitle)
+    if (!title) {
       setCardTitle(card_data.title)
       return
     }
 
-    if (cardTitle !== card_data.title) {
+    setCardTitle(title)
+
+    if (title !== card_data.title) {
       // Update Redux store
       dispatch(boardSlice.actions.updateCard({
         card: card_data,
-        title: cardTitle
+        title: title
       }))
       // API call
       await updateCardDetailsAPI(card_data._id, {
-        title: cardTitle
+        title: title
       })
       return
     }
@@ -82,6 +85,12 @@ function CardDetailsModal({ card_data, column_data }) {
             inputProps={{ maxLength: 256 }}
             onBlur={() => {
               handleEditCardTitle()
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                e.target.blur()
+              }
             }}
             data-no-dnd="true"
             value={cardTitle}

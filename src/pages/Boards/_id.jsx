@@ -14,10 +14,10 @@ import { boardSelector } from '~/redux/selectors'
 
 function Board() {
   const dispatch = useDispatch()
-  // const boardId = '66138370b71c43201bb27685'
+  const boardId = '66138370b71c43201bb27685'
+  // const boardId = '66138370b71c43201bb27635' // wrong board ID to test error handling
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
-  const boardId = '66138370b71c43201bb27635' // wrong board ID to test error handling
   const board = useSelector(boardSelector)
   useEffect(() => {
     dispatch(fetchBoardThunk(boardId))

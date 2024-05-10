@@ -26,7 +26,7 @@ function ListColumns({ columns }) {
   const handleMouseDown = (event) => {
     setIsDown(true)
     setStartX(event.pageX)
-    setScrollLeft(ele.scrollLeft)
+    setScrollLeft(ele?.scrollLeft)
   }
   const handleMouseUp = () => setIsDown(false)
 

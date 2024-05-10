@@ -12,6 +12,12 @@ import PublicIcon from '@mui/icons-material/Public'
 import { capitalizeFirstLetter } from '~/utils/formatters'
 import { useSelector } from 'react-redux'
 import { boardSelector } from '~/redux/selectors'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { boardSlice } from '~/redux/Board/boardSlice'
+import { removeExtraSpaces } from '~/utils/formatters'
+import { TextField } from '@mui/material'
+import { updateBoardDetailsAPI } from '~/apis'
 
 const CHIP_STYLES = {
   color: 'white',
@@ -27,12 +33,41 @@ const CHIP_STYLES = {
 }
 function BoardBar() {
   const board = useSelector(boardSelector)
+  const dispatch = useDispatch()
+
+  // Edit Board Title
+  const [isEditable, setIsEditable] = useState(false)
+  const [boardTitle, setBoardTitle] = useState(board.title)
+  const toggleClickToEdit = () => {
+    setIsEditable(!isEditable)
+  }
+  const handleEditBoardTitle = async () => {
+    const title = removeExtraSpaces(boardTitle)
+    if (!title) {
+      setBoardTitle(board.title)
+      return
+    }
+
+    setBoardTitle(title)
+
+    if (title !== board.title) {
+      // Update redux store
+      dispatch(boardSlice.actions.editBoardTitle({
+        title: title
+      }))
+
+      // API CALL
+      await updateBoardDetailsAPI(board._id, {
+        title: title
+      })
+      return
+    }
+  }
   return (
     <Box sx={{
       width: '100%',
       height: (theme) => theme.custom.boardBarHeight,
       backgroundColor: 'primary.main',
-      // borderBottom: '1px solid white',
       padding: '0 16px 2px 16px'
     }}>
       <Box sx={{
@@ -46,12 +81,46 @@ function BoardBar() {
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Tooltip title={board?.description}>
-            <Chip
-              sx={CHIP_STYLES}
-              icon={<DashboardIcon />}
-              label={board?.title}
-              clickable
-            />
+            {!isEditable
+              ? <Chip
+                sx={CHIP_STYLES}
+                icon={<DashboardIcon />}
+                label={board?.title}
+                clickable
+                onClick={toggleClickToEdit}
+              />
+              : <TextField
+                variant="outlined"
+                size='small'
+                type='text'
+                autoFocus
+                inputProps={{ maxLength: 256 }}
+                onFocus={e => e.target.select()}
+                value={boardTitle}
+                onInput={(e) => setBoardTitle(e.target.value)}
+                onBlur={() => {
+                  toggleClickToEdit()
+                  handleEditBoardTitle()
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    e.target.blur()
+                  }
+                }}
+                sx={{
+                  minWidth: '200px',
+                  // '& input': { color: 'grey.700', fontWeight: 'bold', fontSize: '1rem' },
+                  '& .MuiOutlinedInput-root': {
+                    // py: '8px',
+                    py: '0px',
+                    '& textarea': { color: 'white', fontSize: '0.8125rem' },
+                    '& fieldset': { border: '1px solid #3498db !important', borderRadius: '8px' },
+                    '&:hover fieldset': { border: '2px solid #3498db !important', borderRadius: '8px' },
+                    '&.Mui-focused fieldset': { border: '2px solid #3498db !important', borderRadius: '8px' }
+                  }
+                }}
+              />}
           </Tooltip>
           <Chip
             sx={CHIP_STYLES}

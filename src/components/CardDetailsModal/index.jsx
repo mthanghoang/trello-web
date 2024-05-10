@@ -86,6 +86,12 @@ function CardDetailsModal({ card_data, column_data }) {
             onBlur={() => {
               handleEditCardTitle()
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                e.target.blur()
+              }
+            }}
             data-no-dnd="true"
             value={cardTitle}
             // onChange={(e) => setColumnTitle(e.target.value)}

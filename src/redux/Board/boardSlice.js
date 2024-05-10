@@ -26,6 +26,9 @@ export const boardSlice = createSlice({
     moveCard: (state, action) => {
       state.columns = action.payload
     },
+    editBoardTitle: (state, action) => {
+      state.title = action.payload.title
+    },
     addNewColumn: (state, action) => {
       state.columns.push(action.payload)
       state.columnOrderIds.push(action.payload._id)

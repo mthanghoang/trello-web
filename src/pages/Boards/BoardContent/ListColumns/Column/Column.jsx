@@ -209,6 +209,12 @@ function Column({ column_data }) {
                   toggleClickToEdit()
                   handleEditColumnTitle()
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    e.target.blur()
+                  }
+                }}
                 data-no-dnd="true"
                 value={columnTitle}
                 // onChange={(e) => setColumnTitle(e.target.value)}

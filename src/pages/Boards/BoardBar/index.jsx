@@ -18,6 +18,11 @@ import { boardSlice } from '~/redux/Board/boardSlice'
 import { removeExtraSpaces } from '~/utils/formatters'
 import { TextField } from '@mui/material'
 import { updateBoardDetailsAPI } from '~/apis'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import CheckIcon from '@mui/icons-material/Check'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
 
 const CHIP_STYLES = {
   color: 'white',
@@ -34,6 +39,22 @@ const CHIP_STYLES = {
 function BoardBar() {
   const board = useSelector(boardSelector)
   const dispatch = useDispatch()
+
+  // MENU DROPDOWN for changing Board visibility
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event) => setAnchorEl(event.currentTarget)
+  const handleClose = () => setAnchorEl(null)
+  const handleEditBoardVisibility = (type) => {
+    dispatch(boardSlice.actions.editBoardInfo({
+      type: type,
+      title: board.title,
+      description: board.description
+    }))
+    handleClose()
+    // API CALL
+    updateBoardDetailsAPI(board._id, { type: type })
+  }
 
   // Edit Board Title
   const [isEditable, setIsEditable] = useState(false)
@@ -52,8 +73,10 @@ function BoardBar() {
 
     if (title !== board.title) {
       // Update redux store
-      dispatch(boardSlice.actions.editBoardTitle({
-        title: title
+      dispatch(boardSlice.actions.editBoardInfo({
+        title: title,
+        type: board.type,
+        description: board.description
       }))
 
       // API CALL
@@ -127,7 +150,38 @@ function BoardBar() {
             icon={board?.type === 'public' ? <PublicIcon /> : <VpnLockIcon />}
             label={capitalizeFirstLetter(board?.type)}
             clickable
+            aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={e => handleClick(e)}
           />
+          <Menu
+            id="basic-menu-column-dropdown"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            onClick={handleClose}
+            MenuListProps={{
+              'aria-labelledby': 'basic-column-dropdown'
+            }}
+          >
+            <MenuItem onClick={() => {
+              handleEditBoardVisibility('public')
+              handleClose()
+            }}>
+              {board.type === 'public'
+              && <ListItemIcon><CheckIcon fontSize='small' /></ListItemIcon>}
+              <ListItemText>Public</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => {
+              handleEditBoardVisibility('private')
+              handleClose()
+            }}>
+              {board.type === 'private'
+              && <ListItemIcon><CheckIcon fontSize='small' /></ListItemIcon>}
+              <ListItemText>Private</ListItemText>
+            </MenuItem>
+          </Menu>
           <Chip
             sx={CHIP_STYLES}
             icon={<AddToDriveIcon />}

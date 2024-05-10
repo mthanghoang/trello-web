@@ -1,0 +1,14 @@
+stages:
+    - build
+    - deploy
+    - log
+
+build:
+    stage: build
+    variables:
+        GIT_STRATEGY: clone
+    script:
+        - yarn -DskipTests=true
+        - yarn build
+    tags:
+        - server

@@ -9,8 +9,8 @@ deploy:
         - yarn -DskipTests=true
         - yarn build
         - sudo cp -r ./dist /data/trello-web/
-        # - sudo chown -R trello-web:trello-web /data/trello-web/dist/
-        # - sudo chmod -R 750 /data/trello-web/dist/
+        - sudo chown -R trello-web:trello-web /data/trello-web/
+        - sudo chmod -R 750 /data/trello-web/
     tags:
         - server
 

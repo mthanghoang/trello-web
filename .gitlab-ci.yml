@@ -11,7 +11,7 @@ build:
         - yarn -DskipTests=true
         - yarn build
         - sudo rm -rf /data/trello-web/
-        - sudo mkdir /data/trello-web/dist
+        - sudo mkdir /data/trello-web/
         - sudo mv dist /data/trello-web/dist/
     tags:
         - server

@@ -8,10 +8,10 @@ build:
     variables:
         GIT_STRATEGY: clone
     script:
-        - yarn -DskipTests=true
+        - yarn
         - yarn build
-        - sudo rm -rf /data/trello-web/
-        - sudo mv dist /data/trello-web/dist
+        # - sudo rm -rf /data/trello-web/
+        - sudo mv dist /data/trello-web/dist/
     tags:
         - server
 

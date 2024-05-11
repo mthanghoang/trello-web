@@ -19,7 +19,7 @@ deploy:
     stage: deploy
     variables:
         GIT_STRATEGY: none
-    when: manul
+    when: manual
     script:
         - sudo chown -R trello-web:trello-web /data/trello-web/
         - sudo chmod -R 750 /data/trello-web/

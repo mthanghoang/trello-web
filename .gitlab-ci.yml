@@ -11,7 +11,7 @@ build:
         - yarn -DskipTests=true
         - yarn build
         - sudo rm -rf /data/trello-web/
-        - sudo mv ./dist/ /data/trello-web/
+        - sudo mv dist /data/trello-web/
     tags:
         - server
 
@@ -19,6 +19,7 @@ deploy:
     stage: deploy
     variables:
         GIT_STRATEGY: none
+    when: manul
     script:
         - sudo chown -R trello-web:trello-web /data/trello-web/
         - sudo chmod -R 750 /data/trello-web/

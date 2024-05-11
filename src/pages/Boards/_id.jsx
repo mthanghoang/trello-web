@@ -14,10 +14,10 @@ import { boardSelector } from '~/redux/selectors'
 
 function Board() {
   const dispatch = useDispatch()
-  const boardId = '66138370b71c43201bb27685'
-  // const boardId = '66138370b71c43201bb27635' // wrong board ID to test error handling
+  // const boardId = '66138370b71c43201bb27685'
+  const boardId = '66138370b71c43201bb27635' // wrong board ID to test error handling
   const [loading, setLoading] = useState(true)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [error, setError] = useState(null)
   const board = useSelector(boardSelector)
   useEffect(() => {
     dispatch(fetchBoardThunk(boardId))
@@ -26,7 +26,7 @@ function Board() {
       })
       .catch((error) => {
         // console.log(error)
-        setErrorMessage(error.message)
+        setError(error)
         setLoading(false)
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,7 +50,7 @@ function Board() {
           <CircularProgress />
           <Typography>Loading Board</Typography>
         </Box>
-        : errorMessage
+        : error
           ?
           <Box sx={{
             display: 'flex',
@@ -60,10 +60,7 @@ function Board() {
             height: '100%',
             width: '100%'
           }}>
-            <Typography variant='h6' sx={{ textAlign: 'center', mt: '100px', mx: '50px' }}>{errorMessage}</Typography>
-            <Typography sx={{ textAlign: 'center', mx: '50px' }}>This board may be private. If someone gave you this link,
-              they may need to share the
-             board with you or invite you to their Workspace.</Typography>
+            <Typography variant='h6' sx={{ textAlign: 'center', mt: '100px', mx: '50px' }}>{error.message}</Typography>
           </Box>
           :
           <>

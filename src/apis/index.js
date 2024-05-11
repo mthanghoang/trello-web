@@ -17,11 +17,11 @@ instance.interceptors.response.use(
         autoClose: false,
         closeOnClick: false
       })
-      return Promise.reject(error)
+      return Promise.reject(error) // => {message: 'Network Error', name: 'AxiosError', code: 'ERR_NETWORK', config: {…}, request: XMLHttpRequest,…}
     }
 
     // console.log('Error returned from server:', error.response.data)
-    return Promise.reject(error.response.data)
+    return Promise.reject(error.response.data) // => {message: 'Error text from backend', stack: ' ', statusCode:}
   }
 )
 //Board

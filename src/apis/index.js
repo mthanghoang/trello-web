@@ -26,39 +26,39 @@ instance.interceptors.response.use(
 )
 //Board
 export const fetchBoardDetailsAPI = async (boardId) => {
-  return (await instance.get(`${API_ROOT}/v1/boards/${boardId}`)).data
+  return (await instance.get(`/v1/boards/${boardId}`)).data
 }
 
 export const updateBoardDetailsAPI = async (boardId, dataToUpdate) => {
-  return (await instance.put(`${API_ROOT}/v1/boards/${boardId}`, dataToUpdate)).data
+  return (await instance.put(`/v1/boards/${boardId}`, dataToUpdate)).data
 }
 
 export const moveCardToDifferentColumnAPI = async (dataToUpdate) => {
-  return (await instance.put(`${API_ROOT}/v1/boards/supports/moving_card`, dataToUpdate)).data
+  return (await instance.put('/v1/boards/supports/moving_card', dataToUpdate)).data
 }
 
 //Column
 export const updateColumnDetailsAPI = async (columnId, dataToUpdate) => {
-  return (await instance.put(`${API_ROOT}/v1/columns/${columnId}`, dataToUpdate)).data
+  return (await instance.put(`/v1/columns/${columnId}`, dataToUpdate)).data
 }
 
 export const deleteColumnAPI = async (columnId) => {
-  return (await instance.delete(`${API_ROOT}/v1/columns/${columnId}`)).data
+  return (await instance.delete(`/v1/columns/${columnId}`)).data
 }
 
 export const createNewColumnAPI = async (newColumnData) => {
-  return (await instance.post(`${API_ROOT}/v1/columns/`, newColumnData)).data
+  return (await instance.post('/v1/columns/', newColumnData)).data
 }
 
 //Card
 export const createNewCardAPI = async (newCardData) => {
-  return (await instance.post(`${API_ROOT}/v1/cards/`, newCardData)).data
+  return (await instance.post('/v1/cards/', newCardData)).data
 }
 
 export const deleteCardAPI = async (cardId) => {
-  return (await instance.delete(`${API_ROOT}/v1/cards/${cardId}`)).data
+  return (await instance.delete(`/v1/cards/${cardId}`)).data
 }
 
 export const updateCardDetailsAPI = async (cardId, dataToUpdate) => {
-  return (await instance.put(`${API_ROOT}/v1/cards/${cardId}`, dataToUpdate)).data
+  return (await instance.put(`/v1/cards/${cardId}`, dataToUpdate)).data
 }

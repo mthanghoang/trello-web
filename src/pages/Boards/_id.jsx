@@ -14,8 +14,8 @@ import { boardSelector } from '~/redux/selectors'
 
 function Board() {
   const dispatch = useDispatch()
-  // const boardId = '66138370b71c43201bb27685'
-  const boardId = '66138370b71c43201bb27635' // wrong board ID to test error handling
+  const boardId = '66138370b71c43201bb27685'
+  // const boardId = '66138370b71c43201bb27635' // wrong board ID to test error handling
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const board = useSelector(boardSelector)

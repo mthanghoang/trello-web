@@ -36,6 +36,10 @@ export const updateBoardDetailsAPI = async (boardId, dataToUpdate) => {
 export const moveCardToDifferentColumnAPI = async (dataToUpdate) => {
   return (await instance.put('/v1/boards/supports/moving_card', dataToUpdate)).data
 }
+export const getListBoardsAPI = async () => {
+  return (await instance.get('/v1/boards')).data
+
+}
 
 //Column
 export const updateColumnDetailsAPI = async (columnId, dataToUpdate) => {

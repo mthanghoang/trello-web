@@ -11,14 +11,16 @@ import { fetchBoardThunk } from '~/redux/Board/boardSlice'
 import { useState } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
 import { boardSelector } from '~/redux/selectors'
+import { useParams } from 'react-router-dom'
 
 function Board() {
   const dispatch = useDispatch()
-  const boardId = '66138370b71c43201bb27685'
+  const boardId = useParams().id
+  // const boardId = '66138370b71c43201bb27685'
   // const boardId = '66138370b71c43201bb27635' // wrong board ID to test error handling
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const board = useSelector(boardSelector)
+  // const board = useSelector(boardSelector)
   useEffect(() => {
     dispatch(fetchBoardThunk(boardId))
       .then(() => {
@@ -31,6 +33,8 @@ function Board() {
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const board = useSelector(boardSelector)
 
   return (
     <Container disableGutters maxWidth={false} sx={{

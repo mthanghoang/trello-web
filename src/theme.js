@@ -1,4 +1,5 @@
 // import { createTheme } from '@mui/material/styles'
+import { BorderColor } from '@mui/icons-material'
 import { experimental_extendTheme as extendTheme } from '@mui/material/styles'
 
 // Create a theme instance
@@ -64,7 +65,13 @@ const theme = extendTheme({
           },
           '*::-webkit-scrollbar-thumb:hover': {
             backgroundColor: 'white'
-          }
+          },
+          'input[type="password"]::-ms-reveal': {
+            display: 'none'
+          },
+          // 'input[type="search"]::-webkit-search-cancel-button': {
+          //   -webkit-appearance: 'none'
+          // }
         }
       }
     },
@@ -100,7 +107,9 @@ const theme = extendTheme({
           // },
           '& fieldset': { borderWidth: '1px !important' },
           // '&:hover fieldset': { borderWidth: '2px !important' },
-          '&.Mui-focused fieldset': { borderWidth: '1px !important' }
+          '&.Mui-focused fieldset': { borderWidth: '1px !important',
+            // borderColor: '#fff !important'
+          }
         }
       }
     },

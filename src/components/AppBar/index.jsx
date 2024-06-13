@@ -31,11 +31,6 @@ function AppBar() {
     <Box sx={{
       width: '100%',
       height: (theme) => theme.custom.appBarHeight,
-      // display: 'flex',
-      // alignItems: 'center',
-      // justifyContent: 'space-between',
-      // gap: 2,
-      // overflowX: 'auto',
       backgroundColor: 'primary.dark',
       padding: '0 16px 2px 16px'
     }}>

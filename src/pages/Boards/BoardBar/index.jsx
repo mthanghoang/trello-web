@@ -103,48 +103,46 @@ function BoardBar() {
         overflowX: 'auto'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Tooltip title={board?.description}>
-            {!isEditable
-              ? <Chip
-                sx={CHIP_STYLES}
-                icon={<DashboardIcon />}
-                label={board?.title}
-                clickable
-                onClick={toggleClickToEdit}
-              />
-              : <TextField
-                variant="outlined"
-                size='small'
-                type='text'
-                autoFocus
-                inputProps={{ maxLength: 256 }}
-                onFocus={e => e.target.select()}
-                value={boardTitle}
-                onInput={(e) => setBoardTitle(e.target.value)}
-                onBlur={() => {
-                  toggleClickToEdit()
-                  handleEditBoardTitle()
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    e.target.blur()
-                  }
-                }}
-                sx={{
-                  minWidth: '200px',
-                  // '& input': { color: 'grey.700', fontWeight: 'bold', fontSize: '1rem' },
-                  '& .MuiOutlinedInput-root': {
-                    // py: '8px',
-                    py: '0px',
-                    '& textarea': { color: 'white', fontSize: '0.8125rem' },
-                    '& fieldset': { border: '1px solid #3498db !important', borderRadius: '8px' },
-                    '&:hover fieldset': { border: '2px solid #3498db !important', borderRadius: '8px' },
-                    '&.Mui-focused fieldset': { border: '2px solid #3498db !important', borderRadius: '8px' }
-                  }
-                }}
-              />}
-          </Tooltip>
+          {!isEditable
+            ? <Chip
+              sx={CHIP_STYLES}
+              icon={<DashboardIcon />}
+              label={board?.title}
+              clickable
+              onClick={toggleClickToEdit}
+            />
+            : <TextField
+              variant="outlined"
+              size='small'
+              type='text'
+              autoFocus
+              inputProps={{ maxLength: 256 }}
+              onFocus={e => e.target.select()}
+              value={boardTitle}
+              onInput={(e) => setBoardTitle(e.target.value)}
+              onBlur={() => {
+                toggleClickToEdit()
+                handleEditBoardTitle()
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  e.target.blur()
+                }
+              }}
+              sx={{
+                minWidth: '200px',
+                // '& input': { color: 'grey.700', fontWeight: 'bold', fontSize: '1rem' },
+                '& .MuiOutlinedInput-root': {
+                  // py: '8px',
+                  py: '0px',
+                  '& textarea': { color: 'white', fontSize: '0.8125rem' },
+                  '& fieldset': { border: '1px solid #3498db !important', borderRadius: '8px' },
+                  '&:hover fieldset': { border: '2px solid #3498db !important', borderRadius: '8px' },
+                  '&.Mui-focused fieldset': { border: '2px solid #3498db !important', borderRadius: '8px' }
+                }
+              }}
+            />}
           <Chip
             sx={CHIP_STYLES}
             icon={board?.type === 'public' ? <PublicIcon /> : <VpnLockIcon />}

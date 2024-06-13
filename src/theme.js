@@ -64,7 +64,13 @@ const theme = extendTheme({
           },
           '*::-webkit-scrollbar-thumb:hover': {
             backgroundColor: 'white'
+          },
+          'input[type="password"]::-ms-reveal': {
+            display: 'none'
           }
+          // 'input[type="search"]::-webkit-search-cancel-button': {
+          //   -webkit-appearance: 'none'
+          // }
         }
       }
     },
@@ -73,14 +79,12 @@ const theme = extendTheme({
         root: {
           textTransform: 'none',
           borderWidth: '1px'
-          // '&:hover': {borderWidth: '1.5px'}
         }
       }
     },
     MuiInputLabel: {
       styleOverrides: {
         root: {
-          // color: theme.palette.primary.main,
           fontSize: '0.875rem'
         }
       }
@@ -88,19 +92,10 @@ const theme = extendTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          // color: theme.palette.primary.main,
           fontSize: '0.875rem',
-          // '.MuiOutlinedInput-notchedOutline': {
-          //   borderColor: theme.palette.primary.light
-          // },
-          // '&:hover': {
-          //   '.MuiOutlinedInput-notchedOutline': {
-          //     borderColor: theme.palette.primary.main
-          //   }
-          // },
           '& fieldset': { borderWidth: '1px !important' },
-          // '&:hover fieldset': { borderWidth: '2px !important' },
-          '&.Mui-focused fieldset': { borderWidth: '1px !important' }
+          '&.Mui-focused fieldset': { borderWidth: '1px !important'
+          }
         }
       }
     },

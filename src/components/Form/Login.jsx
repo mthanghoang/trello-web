@@ -11,6 +11,8 @@ import Button from '@mui/material/Button'
 import { useState } from 'react'
 import { isValidEmail } from '~/utils/validators'
 import ModeSwitch from '~/components/ModeSwitch'
+import { ReactComponent as GoogleIcon } from '~/assets/google-logo.svg'
+import SvgIcon from '@mui/material/SvgIcon'
 
 function LogInForm() {
   // PASSWORD VISIBILITY
@@ -157,6 +159,21 @@ function LogInForm() {
           </Box>
           <Button variant='contained' onClick={handleSumit}>
             Log in
+          </Button>
+          <Typography variant='body2' sx={{ textAlign: 'center', mt: '16px', fontWeight: '500', color: theme => theme.palette.mode === 'dark' ? '#fff' : 'grey.700' }}>
+            Or continue with:
+          </Typography>
+          <Button variant='outlined' sx={{ mt: '16px',
+            display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center',
+            color: '#2980b9',
+            borderColor: '#2980b9',
+            '&:hover': { borderColor: '#2980b9' } }}>
+            <SvgIcon
+              component={GoogleIcon}
+              inheritViewBox
+              sx={{ width: '24px', height: '24px' }}
+              fontSize='small' />
+            Google
           </Button>
         </Box>
         <ModeSwitch />

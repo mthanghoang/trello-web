@@ -11,7 +11,7 @@ import Button from '@mui/material/Button'
 import { useState } from 'react'
 import { isValidEmail } from '~/utils/validators'
 import ModeSwitch from '~/components/ModeSwitch'
-import { ReactComponent as GoogleIcon } from '~/assets/google-logo.svg'
+import GoogleIcon from '~/assets/google-logo.svg?react'
 import SvgIcon from '@mui/material/SvgIcon'
 
 function LogInForm() {

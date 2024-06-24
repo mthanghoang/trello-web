@@ -9,10 +9,10 @@ import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import Button from '@mui/material/Button'
 import { useState } from 'react'
-import { isValidEmail } from '~/utils/validators'
 import ModeSwitch from '~/components/ModeSwitch'
 import GoogleIcon from '~/assets/google-logo.svg?react'
 import SvgIcon from '@mui/material/SvgIcon'
+import { loginAPI } from '~/apis'
 
 function LogInForm() {
   // PASSWORD VISIBILITY
@@ -21,38 +21,34 @@ function LogInForm() {
     setShowPassword((show) => !show)
   }
 
-  // INPUT
+  // // INPUT
   const [usernameInput, setUsernameInput] = useState('')
   const [passwordInput, setPasswordInput] = useState('')
-  // INPUT ERROR
-  const [usernameError, setUsernameError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
-  const [passwordError, setPasswordError] = useState(false)
-  // LOGIN FORM VALIDATION
-  const handleSumit = () => {
-    handleUsername()
-    handlePassword()
-  }
-  const handleUsername = () => {
+  const [errors, setErrors] = useState({
+    username: '',
+    password: ''
+  })
+
+  // FORM VALIDATION
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     if (!usernameInput) {
-      setUsernameError(true)
-      setErrorMessage('Required field')
-      return
+      setErrors((prev) => ({ ...prev, username: 'Username is required' }))
     }
-    if (!isValidEmail(usernameInput)) {
-      setUsernameError(true)
-      setErrorMessage('Invalid email')
-      return
+    else {
+      setErrors((prev) => ({ ...prev, username: '' }))
     }
-    setUsernameError(false)
-  }
-  const handlePassword = () => {
     if (!passwordInput) {
-      setPasswordError(true)
-      return
+      setErrors((prev) => ({ ...prev, password: 'Password is required' }))
     }
-    setPasswordError(false)
+    else {
+      setErrors((prev) => ({ ...prev, password: '' }))
+    }
+    if (usernameInput && passwordInput) {
+      await loginAPI({ username: usernameInput, password: passwordInput })
+    }
   }
+
   return (
     <Box sx={{
       display: 'flex',
@@ -87,9 +83,9 @@ function LogInForm() {
         }}>
           <TextField
             id='standard-username-input'
-            label='Username or Email'
+            label='Username'
             // variant='standard'
-            error={usernameError}
+            // error={usernameError}
             value={usernameInput}
             onChange={(e) => setUsernameInput(e.target.value)}
             // onBlur={handleUsername}
@@ -97,7 +93,7 @@ function LogInForm() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
-                  <MailOutlineIcon color={usernameError ? 'error' : ''} />
+                  <MailOutlineIcon color={errors.username ? 'error' : ''} />
                 </InputAdornment>
               )
             }}
@@ -109,9 +105,9 @@ function LogInForm() {
             }}
           />
           <Box mb={2}>
-            {usernameError && (
+            {errors.username && (
               <Typography color='error' sx={{ fontSize: '0.75rem !important', p: '4px' }}>
-                {errorMessage}
+                {errors.username}
               </Typography>
             )}
           </Box>
@@ -120,21 +116,19 @@ function LogInForm() {
             label='Password'
             // variant='standard'
             type={showPassword ? 'text' : 'password'}
-            error={passwordError}
             value={passwordInput}
             onChange={(e) => setPasswordInput(e.target.value)}
-            // onBlur={handlePassword}
             size='small'
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
-                  <LockOutlinedIcon color={passwordError ? 'error' : ''} />
+                  <LockOutlinedIcon color={errors.password ? 'error' : ''} />
                 </InputAdornment>
               ),
               endAdornment: (
                 <InputAdornment position='end'>
                   <IconButton
-                    color={passwordError ? 'error' : ''}
+                    color={errors.password ? 'error' : ''}
                     aria-label='toggle password visibility'
                     onClick={handleClickShowPassword}
                   >
@@ -151,13 +145,13 @@ function LogInForm() {
             }}
           />
           <Box height='22px'>
-            {passwordError && (
+            {errors.password && (
               <Typography color='error' sx={{ fontSize: '0.75rem !important', p: '4px' }}>
-                Required field
+                {errors.password}
               </Typography>
             )}
           </Box>
-          <Button variant='contained' onClick={handleSumit}>
+          <Button variant='contained' onClick={handleSubmit}>
             Log in
           </Button>
           <Typography variant='body2' sx={{ textAlign: 'center', mt: '16px', fontWeight: '500', color: theme => theme.palette.mode === 'dark' ? '#fff' : 'grey.700' }}>

@@ -10,11 +10,20 @@ export const axiosInstance = axios.create({
 axiosInstance.defaults.timeout = 1000 * 60 * 10 // 10 minutes
 
 // Send cookies with requests
-// axiosInstance.defaults.withCredentials = true
+axiosInstance.defaults.withCredentials = true
 
 axiosInstance.interceptors.request.use(
   config => {
-  // Do something before request is sent
+    // Do something before request is sent
+    // Get access token from local storage and attach to the header
+    const accessToken = localStorage.getItem('accessToken')
+    if (accessToken) {
+      // Cần thêm Bearer đề tuân thủ theo tiêu chuẩn OAuth2 trong việc xác định loại token sử dụng
+      // https://tools.ietf.org/html/rfc6750#section-2.1
+      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization
+      // Bearer là định nghĩa loại token dành cho authentication và authorization, tham khảo các loại token khác như: Basic Token, Digest Token, OAuth Token
+      config.headers['Authorization'] = `Bearer ${accessToken}`
+    }
     return config
   },
   error => {
@@ -38,7 +47,6 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error) // => {message: 'Network Error', name: 'AxiosError', code: 'ERR_NETWORK', config: {…}, request: XMLHttpRequest,…}
     }
     // Any status codes that falls outside the range of 2xx cause this function to trigger
-    console.log(error.response.data)
     toast.error(error.response.data.message, {
       autoClose: 5000
     })

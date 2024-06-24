@@ -4,7 +4,7 @@ import { getListBoardsAPI } from '~/apis'
 export const listBoardsSlice = createSlice({
   name: 'listBoards',
   initialState: {
-    boards: [],
+    boards: []
     // loading: false,
     // error: null
   },

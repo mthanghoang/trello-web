@@ -13,6 +13,7 @@ import ModeSwitch from '~/components/ModeSwitch'
 import GoogleIcon from '~/assets/google-logo.svg?react'
 import SvgIcon from '@mui/material/SvgIcon'
 import { loginAPI } from '~/apis'
+import { useNavigate } from 'react-router-dom'
 
 function LogInForm() {
   // PASSWORD VISIBILITY
@@ -29,24 +30,45 @@ function LogInForm() {
     password: ''
   })
 
+  const navigate = useNavigate()
+
   // FORM VALIDATION
   const handleSubmit = async (e) => {
     e.preventDefault()
+    let hasError = false
     if (!usernameInput) {
       setErrors((prev) => ({ ...prev, username: 'Username is required' }))
+      hasError = true
+    }
+    else if (usernameInput.length < 3) {
+      setErrors((prev) => ({ ...prev, username: 'Username must be at least 3 characters' }))
+      hasError = true
     }
     else {
       setErrors((prev) => ({ ...prev, username: '' }))
     }
+
     if (!passwordInput) {
       setErrors((prev) => ({ ...prev, password: 'Password is required' }))
+      hasError = true
+    }
+    else if (passwordInput.length < 6) {
+      setErrors((prev) => ({ ...prev, password: 'Password must be at least 6 characters' }))
+      hasError = true
     }
     else {
       setErrors((prev) => ({ ...prev, password: '' }))
     }
-    if (usernameInput && passwordInput) {
-      await loginAPI({ username: usernameInput, password: passwordInput })
-    }
+    // console.log(errors)
+    if (hasError) return
+
+    const res = await loginAPI({ username: usernameInput, password: passwordInput })
+    localStorage.setItem('accessToken', res.accessToken)
+    localStorage.setItem('refreshToken', res.refreshToken)
+    localStorage.setItem('username', res.username)
+
+    // Redirect to boards page if authentication is successful
+    navigate('/boards')
   }
 
   return (

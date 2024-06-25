@@ -62,10 +62,12 @@ function LogInForm() {
     // console.log(errors)
     if (hasError) return
 
-    const res = await loginAPI({ username: usernameInput, password: passwordInput })
-    localStorage.setItem('accessToken', res.accessToken)
-    localStorage.setItem('refreshToken', res.refreshToken)
-    localStorage.setItem('username', res.username)
+    await loginAPI({ username: usernameInput, password: passwordInput })
+
+    // BE USES COOKIES FOR AUTHENTICATION SO NO NEED TO SAVE ACCESS TOKEN TO LOCAL STORAGE
+    // localStorage.setItem('accessToken', res.accessToken)
+    // localStorage.setItem('refreshToken', res.refreshToken)
+    // localStorage.setItem('username', res.username)
 
     // Redirect to boards page if authentication is successful
     navigate('/boards')

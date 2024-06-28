@@ -9,6 +9,8 @@ import Divider from '@mui/material/Divider'
 import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
+import { logoutAPI } from '~/apis'
+import { useNavigate } from 'react-router-dom'
 
 import React from 'react'
 
@@ -22,6 +24,20 @@ function Profile() {
     setAnchorEl(null)
   }
 
+  const navigate = useNavigate()
+  const handleLogOut = async () => {
+    // Case 1: If using localStorage, then remove the token from local storage
+    // localStorage.removeItem('accessToken')
+    // localStorage.removeItem('refreshToken')
+    // localStorage.removeItem('username')
+
+    // Case 2: If using cookies, then call API to remove cookie and remove user info from local storage
+    await logoutAPI()
+    localStorage.removeItem('user')
+
+    // Redirect to login page after successfully logging out
+    navigate('/login')
+  }
   return (
     <Box>
       <Tooltip title="Profile">
@@ -67,7 +83,7 @@ function Profile() {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={handleLogOut}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

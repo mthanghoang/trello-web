@@ -249,7 +249,7 @@ function BoardContent({ board }) {
         dispatch(boardSlice.actions.moveCard(clonedColumns))
 
         // API call
-        moveCardToDifferentColumnAPI({
+        moveCardToDifferentColumnAPI(board._id, {
           activeCardId: activeCard._id,
           activeColumnId: columnBeforeDrag._id,
           activeCardOrderIds: board.columns.find(c => c._id === columnBeforeDrag._id)?.cardOrderIds.filter(cardId => !cardId.includes('placeholder-card')),

@@ -9,6 +9,10 @@ export const loginAPI = async (loginData) => {
   return (await axiosInstance.post('/v1/authentication/login', loginData)).data
 }
 
+export const logoutAPI = async () => {
+  return (await axiosInstance.delete('/v1/authentication/logout'))
+}
+
 //Board
 export const fetchBoardDetailsAPI = async (boardId) => {
   return (await axiosInstance.get(`/v1/boards/${boardId}`)).data
@@ -18,8 +22,8 @@ export const updateBoardDetailsAPI = async (boardId, dataToUpdate) => {
   return (await axiosInstance.put(`/v1/boards/${boardId}`, dataToUpdate)).data
 }
 
-export const moveCardToDifferentColumnAPI = async (dataToUpdate) => {
-  return (await axiosInstance.put('/v1/boards/supports/moving_card', dataToUpdate)).data
+export const moveCardToDifferentColumnAPI = async (boardId, dataToUpdate) => {
+  return (await axiosInstance.put(`/v1/boards/${boardId}/moving_card`, dataToUpdate)).data
 }
 export const getListBoardsAPI = async () => {
   return (await axiosInstance.get('/v1/boards')).data

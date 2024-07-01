@@ -10,7 +10,15 @@ export const loginAPI = async (loginData) => {
 }
 
 export const logoutAPI = async () => {
-  return (await axiosInstance.delete('/v1/authentication/logout'))
+  // If using localStorage, then remove the token from local storage
+  // localStorage.removeItem('accessToken')
+  // localStorage.removeItem('refreshToken')
+  localStorage.removeItem('user')
+  return await axiosInstance.delete('/v1/authentication/logout')
+}
+
+export const refreshTokenAPI = async () => {
+  return (await axiosInstance.put('/v1/authentication/refresh-token')).data
 }
 
 //Board

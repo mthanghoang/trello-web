@@ -14,6 +14,7 @@ import GoogleIcon from '~/assets/google-logo.svg?react'
 import SvgIcon from '@mui/material/SvgIcon'
 import { loginAPI } from '~/apis'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 function LogInForm() {
   // PASSWORD VISIBILITY
@@ -62,15 +63,23 @@ function LogInForm() {
     // console.log(errors)
     if (hasError) return
 
-    const res = await loginAPI({ username: usernameInput, password: passwordInput })
-
-    // BE USES COOKIES FOR AUTHENTICATION SO NO NEED TO SAVE ACCESS TOKEN AND REFRESH TOKEN TO LOCAL STORAGE
-    // localStorage.setItem('accessToken', res.accessToken)
-    // localStorage.setItem('refreshToken', res.refreshToken)
-    localStorage.setItem('user', JSON.stringify(res))
-
-    // Redirect to boards page if authentication is successful
-    navigate('/boards')
+    loginAPI({ username: usernameInput, password: passwordInput }).then(
+      res => {
+        // BE USES COOKIES FOR AUTHENTICATION SO NO NEED TO SAVE ACCESS TOKEN AND REFRESH TOKEN TO LOCAL STORAGE
+        // localStorage.setItem('accessToken', res.accessToken)
+        // localStorage.setItem('refreshToken', res.refreshToken)
+        localStorage.setItem('user', JSON.stringify(res))
+        // Redirect to boards page if authentication is successful
+        navigate('/boards')
+      }
+    ).catch(
+      error => {
+        // console.log(error)
+        toast.error(error.message, {
+          autoClose: 5000
+        })
+      }
+    )
   }
 
   return (

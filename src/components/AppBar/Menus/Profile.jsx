@@ -26,16 +26,11 @@ function Profile() {
 
   const navigate = useNavigate()
   const handleLogOut = async () => {
-    // Case 1: If using localStorage, then remove the token from local storage
-    // localStorage.removeItem('accessToken')
-    // localStorage.removeItem('refreshToken')
-    // localStorage.removeItem('username')
 
     // Case 2: If using cookies, then call API to remove cookie and remove user info from local storage
     await logoutAPI()
-    localStorage.removeItem('user')
 
-    // Redirect to login page after successfully logging out
+    // Redirect to login page after logging out
     navigate('/login')
   }
   return (

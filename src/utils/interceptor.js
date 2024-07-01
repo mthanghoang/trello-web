@@ -35,6 +35,10 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error)
   })
 
+// Ininitialize a promise for calling refresh token API
+// to prevent multiple calls to refresh token API when multiple requests are sent concurrently
+let refreshTokenPromise = null
+
 axiosInstance.interceptors.response.use(
   // Any status code that lie within the range of 2xx cause this function to trigger
   // Do something with response data
@@ -61,7 +65,7 @@ axiosInstance.interceptors.response.use(
       logoutAPI().then(() => {
         // Display message to user. Make sure the user has enough time to read the message
         // before logging them out
-        toast.error('Unauthorized request. Logging you out...', {
+        toast.error(`${error.response.data.message}. Logging you out...`, {
           autoClose: 5000
         })
         setTimeout(() => {
@@ -77,30 +81,31 @@ axiosInstance.interceptors.response.use(
     // Handle expired access token (auto call refresh token API)
     const originalRequest = error.config
 
-    if (error.response.status === 410 && !originalRequest._retry) {
-      originalRequest._retry = true
+    if (error.response.status === 410 && originalRequest) {
+      // originalRequest._retry = true
 
-      // Get refresh token
-      // 1. from local storage
-      // const refreshToken = localStorage.getItem('refreshToken')
+      if (!refreshTokenPromise) {
+        // Get refresh token
+        // 1. from local storage
+        // const refreshToken = localStorage.getItem('refreshToken')
 
-      // 2. from cookies
-      // const refreshToken = document.cookie.split('; ').find(row => row.startsWith('refreshToken')).split('=')[1]
-      // Call refresh token API
-      return refreshTokenAPI().then(() => {
-        // Save new access token to local storage
-        // localStorage.setItem('accessToken', response.accessToken)
-        // axiosInstance.defaults.headers.Authorization = `Bearer ${response.accessToken}`
+        // Call refresh token API
+        refreshTokenPromise = refreshTokenAPI().then(() => {
+          // Save new access token to local storage
+          // localStorage.setItem('accessToken', response.accessToken)
+          // axiosInstance.defaults.headers.Authorization = `Bearer ${response.accessToken}`
 
-        // Lưu ý là access token cũng đã được update lại ở Cookie (cho trường hợp Cookie)
-
-        // Resend the original request
-        return axiosInstance(originalRequest)
-      }).catch(err => {
-        logoutAPI().then(() => {
-          location.href = '/login'
+          // Lưu ý là access token cũng đã được update lại ở Cookie (cho trường hợp Cookie)
+        }).catch(err => {
+          // Nếu API refresh token lỗi thì BE đã trả về code 401 nên sẽ rơi vào block 401 ở trên
+          return Promise.reject(err)
+        }).finally(() => {
+          refreshTokenPromise = null
         })
-        return Promise.reject(err)
+      }
+      return refreshTokenPromise.then(() => {
+        // Return axios instance together with original request to retry failed API call
+        return axiosInstance(originalRequest)
       })
     }
 

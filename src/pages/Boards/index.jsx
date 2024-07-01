@@ -19,6 +19,21 @@ function ListBoards() {
       .then(() => setLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  // useEffect(() => {
+  //   dispatch(fetchListBoardsThunk())
+  //     .then(() => setLoading(false))
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
+  // useEffect(() => {
+  //   dispatch(fetchListBoardsThunk())
+  //     .then(() => setLoading(false))
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
+  // useEffect(() => {
+  //   dispatch(fetchListBoardsThunk())
+  //     .then(() => setLoading(false))
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   const listBoards = useSelector(listBoardsSelector)
   return (
